@@ -50,5 +50,5 @@ echo "-----------------------------------"
 echo "✅ Deployment finished. Current Status:"
 echo ""
 
-# 列出当前项目的容器状态（仅加入 -d 参数时有用）
+# 列出当前项目的容器状态
 docker compose ps

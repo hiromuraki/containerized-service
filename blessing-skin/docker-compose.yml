@@ -31,4 +31,4 @@ services:
         ports:
             - "25580:80"
         volumes:
-            - ./src/nginx.app.conf.template:/etc/nginx/templates/app.conf.template:ro
+            - ${DATA_DIR}/nginx.app.conf:/etc/nginx/conf.d/app.conf:ro
