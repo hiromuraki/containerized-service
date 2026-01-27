@@ -26,8 +26,6 @@ services:
     nginx:
         image: nginx:latest
         restart: always
-        env_file:
-            - .env
         ports:
             - "25580:80"
         volumes:
