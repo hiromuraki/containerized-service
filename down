@@ -1,1 +1,40 @@
 #!/bin/bash
+set -e
+
+# 检查参数
+if [ -z "$1" ]; then
+    echo "用法: ./down <project-name> [args...]"
+    echo "示例: ./down my-app"
+    echo "示例: ./down my-app -v"
+    exit 1
+fi
+
+PROJECT_NAME="$1"
+shift
+
+# 设置变量
+# 注意：即使是 down，也必须设置这些，否则 compose 解析 yml 时会报错
+export DATA_DIR="$HOME/mydata/$PROJECT_NAME"
+CS_UID=$(id -u); 
+CS_GID=$(id -g); 
+export CS_UID
+export CS_GID
+
+# 进入目录
+PROJECT_DIR="$(pwd)/$PROJECT_NAME"
+
+if [ ! -d "$PROJECT_DIR" ]; then
+    echo "❌ 错误: 找不到项目目录 $PROJECT_DIR"
+    exit 1
+fi
+
+cd "$PROJECT_DIR"
+
+echo "🔻 Stopping: $PROJECT_NAME"
+# 如果有额外的参数（比如 -v），打印出来提醒一下
+if [ -n "$*" ]; then
+    echo "⚠️  Args: $*"
+fi
+
+# 执行 down
+exec docker compose down "$@"
