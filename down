@@ -31,10 +31,17 @@ fi
 cd "$PROJECT_DIR"
 
 echo "🔻 Stopping: $PROJECT_NAME"
+if [ -n "$*" ]; then
+    echo "⚠️  Args: $*"
+fi
+echo "-----------------------------------"
 # 如果有额外的参数（比如 -v），打印出来提醒一下
 if [ -n "$*" ]; then
     echo "⚠️  Args: $*"
 fi
 
 # 执行 down
-exec docker compose down "$@"
+docker compose down "$@"
+
+echo "-----------------------------------"
+echo "✅ $PROJECT_NAME stopped successfully."
