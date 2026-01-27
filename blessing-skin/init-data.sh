@@ -28,9 +28,6 @@ mkdir ./data/plugins
 # 复制 Blessing Skin 的 Storage 目录，该目录含有持久化信息
 cp -r ./temp/storage ./data/
 
-# 复制 .env 文件
-cp ./src/app.env ./data/.env
-
 # 创建数据库文件
 touch ./data/data.db
 
