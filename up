@@ -1,0 +1,47 @@
+#!/bin/bash
+set -e
+
+# 检查是否提供了项目名称
+if [ -z "$1" ]; then
+    echo "用法: ./up <project-name> [docker-compose-args...]"
+    echo "示例: ./up my-app -d --build"
+    exit 1
+fi
+
+# 提取第一个参数作为项目名称
+PROJECT_NAME="$1"
+
+# 使用 shift 移除第一个参数 ($1)
+# 此时，$@ 就只包含剩下的参数了（比如 -d --build）
+shift
+
+# 设置 DATA_DIR 环境变量
+export DATA_DIR="$HOME/containerized-service-data/$PROJECT_NAME"
+
+# 自动创建数据目录，防止 docker 报错或自动创建为 root 权限
+mkdir -p "$DATA_DIR"
+
+# 设置用户环境变量
+CS_UID=$(id -u)
+CS_GID=$(id -g)
+export CS_UID
+export CS_GID
+
+# 项目目录
+PROJECT_DIR="$(pwd)/$PROJECT_NAME"
+
+if [ ! -d "$PROJECT_DIR" ]; then
+    echo "❌ 错误: 找不到项目目录 $PROJECT_DIR"
+    exit 1
+fi
+
+cd "$PROJECT_DIR"
+
+echo "📂 Project: $PROJECT_NAME"
+echo "💾 DATA_DIR: $DATA_DIR"
+echo "🆔 USER: $CS_UID:$CS_GID"
+echo "🚀 Executing: docker compose up $*"
+echo "-----------------------------------"
+
+# 执行 docker compose
+exec docker compose up "$@"

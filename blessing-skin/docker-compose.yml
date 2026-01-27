@@ -1,0 +1,34 @@
+name: minecraft-blessing-skin
+
+services:
+    app:
+        build:
+            context: .
+            args:
+                - UID=${CS_UID}
+                - GID=${CS_GID}
+        restart: always
+        user: ${CS_UID:-1000}:${CS_GID:-1000}
+        volumes:
+            - ${DATA_DIR}/plugins:/app/plugins
+            - ${DATA_DIR}/skin:/app/skin
+            - ${DATA_DIR}/storage:/app/storage
+            - ${DATA_DIR}/.env:/app/.env
+            - ${DATA_DIR}:/data
+            - /etc/localtime:/etc/localtime:ro
+
+    redis:
+        image: redis:alpine
+        restart: always
+        volumes:
+            - /etc/localtime:/etc/localtime:ro
+
+    nginx:
+        image: nginx:latest
+        restart: always
+        env_file:
+            - .env
+        ports:
+            - "25580:80"
+        volumes:
+            - ./src/nginx.app.conf.template:/etc/nginx/templates/app.conf.template:ro
