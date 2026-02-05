@@ -5,5 +5,7 @@ RUN apk add --no-cache \
     iptables \
     wireguard-tools
 
-COPY ./src/start.sh /bin/start.sh
+COPY ./start.sh /bin/start.sh
 RUN chmod +x /bin/start.sh
+
+CMD ["start.sh"]

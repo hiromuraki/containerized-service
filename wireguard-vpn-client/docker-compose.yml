@@ -1,7 +1,7 @@
 name: wireguard-vpn
 
 services:
-    wg-server:
+    wg-client:
         build: ./wireguard
         restart: always
         network_mode: host
@@ -10,15 +10,12 @@ services:
             - SYS_MODULE
         volumes:
             - ${DATA_DIR}/wg0.conf:/etc/wireguard/wg0.conf:ro
-        command: start.sh
-    
-    dns:
-        image: 4km3/dnsmasq
+
+    keepalive:
+        build: ./keepalive
         depends_on:
-            - wg-server
+            - wg-client
         restart: always
         network_mode: host
-        cap_add:
-            - NET_ADMIN
         volumes:
-            - ${DATA_DIR}/wg0-dnsmasq.conf:/etc/dnsmasq.conf:ro
+            - ${DATA_DIR}/keepalive.conf:/etc/keepalive.conf:ro
