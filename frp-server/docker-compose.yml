@@ -1,0 +1,9 @@
+name: frp-server
+
+services:
+    app:
+        image: snowdreamtech/frps
+        restart: always
+        network_mode: host
+        volumes:
+            - ${DATA_DIR}/frps.toml:/etc/frp/frps.toml
