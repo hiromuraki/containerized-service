@@ -6,4 +6,4 @@ services:
         restart: always
         network_mode: host
         volumes:
-            - ${DATA_DIR}/frp-server/frps.toml:/etc/frp/frps.toml
+            - ${DATA_DIR}/frps.toml:/etc/frp/frps.toml
