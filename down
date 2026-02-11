@@ -15,10 +15,10 @@ shift
 # 设置变量
 # 注意：即使是 down，也必须设置这些，否则 compose 解析 yml 时会报错
 export DATA_DIR="$HOME/mydata/$PROJECT_NAME"
-CS_UID=$(id -u); 
-CS_GID=$(id -g); 
-export CS_UID
-export CS_GID
+PUID=$(id -u); 
+PGID=$(id -g); 
+export PUID
+export PGID
 
 # 进入目录
 PROJECT_DIR="$(pwd)/$PROJECT_NAME"

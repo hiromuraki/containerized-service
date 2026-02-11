@@ -5,10 +5,10 @@ services:
         build:
             context: .
             args:
-                - UID=${CS_UID}
-                - GID=${CS_GID}
+                - UID=${PUID}
+                - GID=${PGID}
         restart: always
-        user: ${CS_UID:-1000}:${CS_GID:-1000}
+        user: ${PUID:-1000}:${PGID:-1000}
         volumes:
             - ${DATA_DIR}/plugins:/app/plugins
             - ${DATA_DIR}/skin:/app/skin
