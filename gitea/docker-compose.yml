@@ -16,22 +16,15 @@ services:
             - NO_PROXY=localhost,127.0.0.1,.local,::1,gitea,db
             # 时区信息
             - TZ=Asia/Shanghai
-            # Gitea 设置
-            - GITEA__server__ROOT_URL=http://git.service.home/
-            - GITEA__server__DOMAIN=git.service.home
-            - GITEA__server__SSH_DOMAIN=git.service.home
-            - GITEA__server__SSH_PORT=2222
-            - GITEA__database__DB_TYPE=sqlite3
-            - GITEA__database__PATH=/data/gitea/gitea.db
         networks:
             - gitea_net
         volumes:
             - ${DATA_DIR:-.}/gitea_data:/data
         ports:
             # Web 界面端口
-            - "3000:3000"
+            - "3001:3000"
             # Git SSH 端口
-            - "2222:22"
+            - "3322:22"
 
     # 2. act_runner CI 执行器 Runner
     runner:

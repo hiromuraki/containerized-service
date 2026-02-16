@@ -1,0 +1,46 @@
+name: forgejo
+
+services:
+    # 1. 代码托管平台主体
+    server:
+        build: ./forgejo
+        container_name: forgejo-server
+        restart: always
+        environment:
+            - USER_UID=${PUID:-1000}
+            - USER_GID=${PGID:-1000}
+            - TZ=${TIMEZONE:-Asia/Shanghai}
+        networks:
+            - forgejo_net
+        volumes:
+            - ${DATA_DIR:-.}/forgejo_data:/data
+        ports:
+            # Web 界面端口
+            - "3000:3000"
+            # Git SSH 端口
+            - "2222:22"
+
+    # 2. CI 执行器
+    runner:
+        build: ./runner
+        container_name: forgejo-runner
+        restart: always
+        user: root
+        depends_on:
+            - server
+        networks:
+            - forgejo_net
+        environment:
+            - TZ=${TIMEZONE:-Asia/Shanghai}
+            - FORGEJO_INSTANCE_URL=http://server:3000
+            - FORGEJO_RUNNER_REGISTRATION_TOKEN=NkHzCDW3aDVkoG5omOtPEEXb0fUMJeaHvZSGn56VGif
+            - DOCKER_HOST=unix:///var/run/docker.sock
+        volumes:
+            - ${DATA_DIR:-.}/runner_data:/data
+            - /var/run/docker.sock:/var/run/docker.sock
+        command: /bin/command.sh
+
+networks:
+    forgejo_net:
+        name: forgejo_net
+        external: false
