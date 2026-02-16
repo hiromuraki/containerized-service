@@ -9,7 +9,8 @@ fi;
 
 if [ ! -f /data/.runner ]; then
     echo 'First time setup: Registering runner...';
-    forgejo-runner register --no-interactive \
+    forgejo-runner register \
+        --no-interactive \
         --instance "$FORGEJO_INSTANCE_URL" \
         --token "$FORGEJO_RUNNER_REGISTRATION_TOKEN" \
         --name home-runner \
@@ -17,4 +18,4 @@ if [ ! -f /data/.runner ]; then
 fi;
 
 echo 'Starting runner daemon...';
-forgejo-runner daemon --config /data/config.yml;
+exec forgejo-runner daemon --config /data/config.yml;
