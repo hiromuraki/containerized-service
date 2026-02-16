@@ -1,0 +1,28 @@
+name: wireguard-vpn-server
+
+services:
+    wireguard:
+        build: ./wireguard
+        restart: always
+        network_mode: host
+        cap_add:
+            - NET_ADMIN
+            - SYS_MODULE
+        environment:
+            - TZ=${TIMEZONE:-Asia/Shanghai}
+        volumes:
+            - ${DATA_DIR:-.}/wg0.conf:/etc/wireguard/wg0.conf:ro
+        command: start.sh
+
+    dns:
+        build: ./dns
+        depends_on:
+            - wireguard
+        restart: always
+        network_mode: host
+        cap_add:
+            - NET_ADMIN
+        environment:
+            - TZ=${TIMEZONE:-Asia/Shanghai}
+        volumes:
+            - ${DATA_DIR:-.}/dnsmasq.conf:/etc/dnsmasq.conf:ro

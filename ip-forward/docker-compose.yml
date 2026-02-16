@@ -1,9 +1,0 @@
-name: ip-forward
-
-services:
-    nginx:
-        image: nginx:latest
-        restart: always
-        network_mode: host
-        volumes:
-            - ${DATA_DIR}/nginx.conf:/etc/nginx/nginx.conf:ro

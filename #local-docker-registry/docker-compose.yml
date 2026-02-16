@@ -5,9 +5,9 @@ services:
         image: registry:2
         restart: always
         user: ${PUID:-1000}:${PGID:-1000}
+        environment:
+            REGISTRY_STORAGE_DELETE_ENABLED: "true"
         ports:
             - 5000:5000
         volumes:
-            - ${DATA_DIR}/registry:/var/lib/registry
-        environment:
-            REGISTRY_STORAGE_DELETE_ENABLED: "true"
+            - ${DATA_DIR:-.}/registry:/var/lib/registry

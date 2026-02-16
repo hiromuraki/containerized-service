@@ -15,16 +15,16 @@ services:
             # 配置 NO_PROXY 防止内部通信走代理
             - NO_PROXY=localhost,127.0.0.1,.local,::1,gitea,db
             # 时区信息
-            - TZ=Asia/Shanghai
+            - TZ=${TIMEZONE:-Asia/Shanghai}
         networks:
             - gitea_net
         volumes:
             - ${DATA_DIR:-.}/gitea_data:/data
         ports:
             # Web 界面端口
-            - "3001:3000"
+            - "3000:3000"
             # Git SSH 端口
-            - "3322:22"
+            - "2222:22"
 
     # 2. act_runner CI 执行器 Runner
     runner:
@@ -35,14 +35,12 @@ services:
         networks:
             - gitea_net
         environment:
+            - TZ=${TIMEZONE:-Asia/Shanghai}
             - GITEA_INSTANCE_URL=http://server:3000
-            # 配置文件路径
             - CONFIG_FILE=/data/config.yaml
-            # 下面这个 Token 需要先启动 server，从后台获取填入，再重启 runner
             - GITEA_RUNNER_REGISTRATION_TOKEN=kb44snt9PHmedBdB7HyAmw66vYkAbU4gT8vEEd8g
         volumes:
             - ${DATA_DIR:-.}/runner_data:/data
-            # 关键：让 Runner 能调用宿主机的 Docker 来构建镜像
             - /var/run/docker.sock:/var/run/docker.sock
 
 networks:

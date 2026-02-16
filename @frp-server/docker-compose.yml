@@ -5,5 +5,7 @@ services:
         build: ./frps
         restart: always
         network_mode: host
+        environment:
+            - TZ=${TIMEZONE:-Asia/Shanghai}
         volumes:
             - ${DATA_DIR}/frps.toml:/etc/frp/frps.toml
