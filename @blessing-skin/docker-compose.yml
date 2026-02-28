@@ -2,25 +2,22 @@ name: minecraft-blessing-skin
 
 services:
     app:
-        build:
-            context: ./blessing-skin
-            args:
-                - UID=${PUID:-1000}
-                - GID=${PGID:-1000}
+        build: ./blessing-skin
         restart: always
-        user: ${PUID:-1000}:${PGID:-1000}
+        environment:
+            TZ: "${TIMEZONE:-Asia/Shanghai}"
         ports:
             - "25580:80"
         volumes:
-            - ${DATA_DIR:-.}/plugins:/app/plugins
-            - ${DATA_DIR:-.}/skin:/app/skin
-            - ${DATA_DIR:-.}/storage:/app/storage
-            - ${DATA_DIR:-.}/.env:/app/.env
-            - ${DATA_DIR:-.}:/data
-            - /etc/localtime:/etc/localtime:ro
+            - ${DATA_DIR:-./data}/plugins:/app/plugins
+            - ${DATA_DIR:-./data}/skin:/app/skin
+            - ${DATA_DIR:-./data}/storage:/app/storage
+            - ${DATA_DIR:-./data}/.env:/app/.env
+            - ${DATA_DIR:-./data}:/data
+        command: /bin/command.sh
 
     redis:
         image: redis:alpine
         restart: always
-        volumes:
-            - /etc/localtime:/etc/localtime:ro
+        environment:
+            - TZ=${TIMEZONE:-Asia/Shanghai}

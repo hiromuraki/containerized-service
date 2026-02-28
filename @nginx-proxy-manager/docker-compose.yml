@@ -5,13 +5,13 @@ services:
         image: jc21/nginx-proxy-manager:latest
         restart: always
         environment:
-            - PUID=${PUID:-1000}
-            - PGID=${PGID:-1000}
-            - TZ=${TIMEZONE:-Asia/Shanghai}
+            PUID: "${PUID:-1000}"
+            PGID: "${PGID:-1000}"
+            TZ: "${TIMEZONE:-Asia/Shanghai}"
         ports:
             - "80:80"
             - "81:81"
             - "443:443"
         volumes:
-            - ${DATA_DIR:-.}/data:/data
-            - ${DATA_DIR:-.}/letsencrypt:/etc/letsencrypt
+            - ${DATA_DIR:-./data}/data:/data
+            - ${DATA_DIR:-./data}/letsencrypt:/etc/letsencrypt

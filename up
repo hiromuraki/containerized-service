@@ -27,6 +27,9 @@ PGID=$(id -g)
 export PUID
 export PGID
 
+# 设置时区变量
+export TIMEZONE="Asia/Shanghai"
+
 # 项目目录
 PROJECT_DIR="$(pwd)/$PROJECT_NAME"
 

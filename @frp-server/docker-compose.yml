@@ -6,6 +6,6 @@ services:
         restart: always
         network_mode: host
         environment:
-            - TZ=${TIMEZONE:-Asia/Shanghai}
+            TZ: "${TIMEZONE:-Asia/Shanghai}"
         volumes:
-            - ${DATA_DIR}/frps.toml:/etc/frp/frps.toml
+            - ${DATA_DIR:-./data}/frps.toml:/etc/frp/frps.toml

@@ -1,5 +1,4 @@
 name: wireguard-vpn-server
-
 services:
     wireguard:
         build: ./wireguard
@@ -9,9 +8,9 @@ services:
             - NET_ADMIN
             - SYS_MODULE
         environment:
-            - TZ=${TIMEZONE:-Asia/Shanghai}
+            TZ: "${TIMEZONE:-Asia/Shanghai}"
         volumes:
-            - ${DATA_DIR:-.}/wg0.conf:/etc/wireguard/wg0.conf:ro
+            - ${DATA_DIR:-./data}/wg0.conf:/etc/wireguard/wg0.conf:ro
         command: start.sh
 
     dns:
