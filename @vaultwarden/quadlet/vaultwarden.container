@@ -5,6 +5,8 @@ After=network-online.target
 [Container]
 Image=docker.io/vaultwarden/server:latest
 ContainerName=vaultwarden
+DNS=10.8.0.1
+DNS=1.1.1.1
 
 Environment=TZ=Asia/Shanghai
 Environment=DOMAIN=https://vw.daveny.top
