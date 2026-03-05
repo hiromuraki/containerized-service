@@ -1,0 +1,27 @@
+[Unit]
+Description=Forgejo Git Service
+After=network-online.target
+
+[Container]
+Image=codeberg.org/forgejo/forgejo:14
+ContainerName=forgejo
+DNS=10.8.0.1
+DNS=1.1.1.1
+
+Environment=USER_UID=1000
+Environment=USER_GID=1000
+Environment=TZ=Asia/Shanghai
+
+Volume=forgejo-data.volume:/data
+
+Network=homelab.network
+
+# 只暴露 SSH 端口给物理机，Web 3000 端口在内网里等 NPM 来反代
+PublishPort=2222:22
+
+[Service]
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

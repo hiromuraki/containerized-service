@@ -1,0 +1,21 @@
+[Unit]
+Description=Vaultwarden Password Manager
+After=network-online.target
+
+[Container]
+Image=docker.io/vaultwarden/server:latest
+ContainerName=vaultwarden
+
+Environment=TZ=Asia/Shanghai
+Environment=DOMAIN=https://vw.daveny.top
+
+Volume=vaultwarden-data.volume:/data/
+
+Network=homelab.network
+
+[Service]
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

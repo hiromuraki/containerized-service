@@ -1,0 +1,14 @@
+name: vaultwarden
+
+services:
+    vaultwarden:
+        image: vaultwarden/server:latest
+        container_name: vaultwarden
+        restart: always
+        environment:
+            TZ: "${TIMEZONE:-Asia/Shanghai}"
+            DOMAIN: "https://vw.daveny.top"
+        volumes:
+            - ${DATA_DIR:-./data}:/data/
+        ports:
+            - 8000:80
