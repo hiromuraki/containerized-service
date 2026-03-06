@@ -94,11 +94,16 @@ def main():
     # 参数解析
     parser = argparse.ArgumentParser(description="Deploy Podman Quadlet files via symlinks.")
     parser.add_argument('--service', type=str, help="Only deploy the specified directory")
+    parser.add_argument('--kube-only', action='store_true',
+                        help="Only deploy the .kube and its required quadlet files")
     parser.add_argument('--dry-run', action='store_true', help="Preview actions without making actual changes")
     args = parser.parse_args()
 
     # 1. 遍历符合条件的目录
     quadlet_files = get_quadlet_files(args.service)
+    if args.kube_only:
+        quadlet_files = [x for x in quadlet_files if x.suffix in (".kube", ".network", ".volume")]
+
     if not quadlet_files:
         print("No Quadlet files found")
         return
@@ -116,12 +121,12 @@ def main():
             print("Deployment aborted.")
             sys.exit(1)
         used_filenames[filename] = file
-    
+
     # 2. 外部查重：检查目标目录中是否已有重名文件并提示 y/n/a
     # 记录操作决策，格式: [(source_path, dest_path, action_type)]
     actions: list[tuple[Path, Path, Literal["link", "skip"]]] = []
     overwrite_all = False
-    
+
     for file in quadlet_files:
         filename = file.name
         target_path = DEST_DIR / filename
