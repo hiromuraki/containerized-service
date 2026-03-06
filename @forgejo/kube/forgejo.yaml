@@ -14,9 +14,9 @@ spec:
               - containerPort: 3000
           env:
               - name: USER_UID
-                value: "0"
+                value: "1000"
               - name: USER_GID
-                value: "0"
+                value: "1000"
               - name: TZ
                 value: "Asia/Shanghai"
           volumeMounts:

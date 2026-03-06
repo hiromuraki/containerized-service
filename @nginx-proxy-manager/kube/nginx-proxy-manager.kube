@@ -1,0 +1,12 @@
+[Unit]
+Description=Nginx Proxy Manager
+
+[Kube]
+Yaml=%h/containerized-service/@nginx-proxy-manager/kube/nginx-proxy-manager.yaml
+Network=homelab
+PublishPort=80:80
+PublishPort=81:81
+PublishPort=443:443
+
+[Install]
+WantedBy=default.target

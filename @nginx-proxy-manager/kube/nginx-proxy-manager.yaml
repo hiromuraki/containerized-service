@@ -12,11 +12,8 @@ spec:
           image: docker.io/jc21/nginx-proxy-manager:latest
           ports:
               - containerPort: 80
-                hostPort: 80
               - containerPort: 81
-                hostPort: 81
               - containerPort: 443
-                hostPort: 443
           env:
               - name: PUID
                 value: "0"
