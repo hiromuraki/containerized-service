@@ -51,7 +51,8 @@ def deploy(actions: list[DeploymentAction]):
             try:
                 if dest.exists() or dest.is_symlink():
                     dest.unlink()
-                dest.symlink_to(src)
+                # dest.symlink_to(src)
+                src.copy(dest)
                 print(f"Success: Linked {dest.name}")
             except Exception as e:
                 print(f"Failed: Could not link {dest.name}. Error: {e}")
