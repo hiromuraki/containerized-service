@@ -22,15 +22,7 @@ spec:
           volumeMounts:
               - name: forgejo-data
                 mountPath: /data
-              - name: forgejo-config
-                mountPath: /data/gitea/conf/app.ini
-                readOnly: true
     volumes:
         - name: forgejo-data
           persistentVolumeClaim:
               claimName: forgejo-data
-
-        - name: forgejo-config
-          hostPath:
-              path: /home/daveny/containerized-service/config/@forgejo/app.ini
-              type: File
