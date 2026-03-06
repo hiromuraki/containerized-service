@@ -2,7 +2,7 @@
 Description=Forgejo
 
 [Kube]
-Yaml=%h/containerized-service/@forgejo/kube/forgejo.yaml
+Yaml=%h/containerized-service/@forgejo/k8s.yaml
 Network=homelab
 PublishPort=2222:22
 

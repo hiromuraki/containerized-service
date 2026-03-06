@@ -2,7 +2,7 @@
 Description=Vaultwarden
 
 [Kube]
-Yaml=%h/containerized-service/@vaultwarden/kube/vaultwarden.yaml
+Yaml=%h/containerized-service/@vaultwarden/k8s.yaml
 Network=homelab
 
 [Install]

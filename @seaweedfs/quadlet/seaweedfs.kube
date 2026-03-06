@@ -2,7 +2,7 @@
 Description=SeaweedFS Cluster
 
 [Kube]
-Yaml=%h/containerized-service/@seaweedfs/seaweedfs.yaml
+Yaml=%h/containerized-service/@seaweedfs/k8s.yaml
 Network=homelab
 PublishPort=9333:9333
 PublishPort=8888:8888
