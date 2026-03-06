@@ -1,0 +1,10 @@
+[Unit]
+Description=Forgejo
+
+[Kube]
+Yaml=%h/containerized-service/@forgejo/kube/forgejo.kube
+Network=homelab
+PublishPort=2222:22
+
+[Install]
+WantedBy=default.target

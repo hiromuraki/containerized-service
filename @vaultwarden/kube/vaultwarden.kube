@@ -2,10 +2,8 @@
 Description=Vaultwarden
 
 [Kube]
-Yaml=/home/user/source/repos/containerized-service/@vaultwarden/kube/vaultwarden.yaml
-PublishPort=9333:9333
-PublishPort=8888:8888
-PublishPort=8333:8333
+Yaml=%h/containerized-service/@vaultwarden/kube/vaultwarden.yaml
+Network=homelab
 
 [Install]
 WantedBy=default.target
