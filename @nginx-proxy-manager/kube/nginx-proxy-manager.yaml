@@ -6,9 +6,8 @@ metadata:
         app: nginx-proxy-manager
 spec:
     restartPolicy: Always
-    networkMode: "homelab-net"
     containers:
-        - name: app
+        - name: nginx-proxy-manager
           image: docker.io/jc21/nginx-proxy-manager:latest
           ports:
               - containerPort: 80
