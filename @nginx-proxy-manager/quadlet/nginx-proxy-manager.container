@@ -5,8 +5,6 @@ After=network-online.target
 [Container]
 Image=docker.io/jc21/nginx-proxy-manager:latest
 ContainerName=nginx-proxy-manager
-DNS=10.8.0.1
-DNS=1.1.1.1
 
 Environment=PUID=0
 Environment=PGID=0

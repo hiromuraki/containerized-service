@@ -1,0 +1,18 @@
+name: forgejo-ci-runner
+
+services:
+    ci_runner:
+        build: ./runner
+        container_name: forgejo-ci-runner
+        restart: always
+        network_mode: host
+        user: root
+        environment:
+            TZ: "${TIMEZONE:-Asia/Shanghai}"
+            FORGEJO_INSTANCE_URL: "https://git.daveny.top"
+            FORGEJO_RUNNER_REGISTRATION_TOKEN: "NkHzCDW3aDVkoG5omOtPEEXb0fUMJeaHvZSGn56VGif"
+            DOCKER_HOST: "unix:///var/run/docker.sock"
+        volumes:
+            - ./data:/data
+            - /var/run/docker.sock:/var/run/docker.sock
+        command: /bin/command.sh

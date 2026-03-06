@@ -5,8 +5,6 @@ After=network-online.target
 [Container]
 Image=codeberg.org/forgejo/forgejo:14
 ContainerName=forgejo
-DNS=10.8.0.1
-DNS=1.1.1.1
 
 Environment=USER_UID=1000
 Environment=USER_GID=1000
