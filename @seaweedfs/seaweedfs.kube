@@ -1,0 +1,12 @@
+[Unit]
+Description=SeaweedFS Cluster
+
+[Kube]
+Yaml=%h/containerized-service/@seaweedfs/seaweedfs.yaml
+Network=homelab
+PublishPort=9333:9333
+PublishPort=8888:8888
+PublishPort=8333:8333
+
+[Install]
+WantedBy=default.target
