@@ -123,8 +123,15 @@ def backup_podman_volume(volume_name: str, out_file: Path) -> bool:
                 command=["tar", "-czvf", f"/backup/{backup_filename}", "-C", "/data", "."],
                 remove=True,
                 volumes={
-                    volume_name: {'bind': '/data', 'mode': 'ro'},
-                    backup_dir: {'bind': '/backup', 'mode': 'rw,z'} # z 标签以处理 SELinux 下的写入
+                    volume_name: {
+                        'bind': '/data',
+                        'mode': 'ro'
+                    },
+                    str(backup_dir): {
+                        'bind': '/backup',
+                        'mode': 'rw',
+                        'selinux': 'z'   # 处理 SELinux
+                    }
                 }
             )
 
