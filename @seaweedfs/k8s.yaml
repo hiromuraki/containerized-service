@@ -19,6 +19,7 @@ spec:
           args: ["volume", "-mserver=localhost:9333", "-port=8080", "-ip=localhost"]
           volumeMounts:
               - name: seaweed-data
+                subPath: volume
                 mountPath: /data
 
         # 3. Filer 浏览器
@@ -33,7 +34,18 @@ spec:
                 mountPath: /etc/seaweedfs/filer.toml
                 readOnly: true
 
-        # 4. S3 网关
+        # 4. redis
+        - name: redis
+          image: docker.io/redis:7-alpine
+          args: ["redis-server", "--appendonly", "yes"]
+          ports:
+              - containerPort: 6379
+          volumeMounts:
+              - name: seaweed-data
+                subPath: redis
+                mountPath: /data
+
+        # 5. S3 网关
         - name: s3
           image: docker.io/chrislusf/seaweedfs:latest
           args:
@@ -52,16 +64,6 @@ spec:
                 mountPath: /etc/seaweedfs/s3.json
                 readOnly: true
 
-        # 5. redis
-        - name: redis
-          image: docker.io/redis:7-alpine
-          args: ["redis-server", "--appendonly", "yes"]
-          ports:
-              - containerPort: 6379
-          volumeMounts:
-              - name: seaweed-redis
-                mountPath: /data
-
     volumes:
         - name: seaweed-data
           persistentVolumeClaim:
@@ -69,6 +71,3 @@ spec:
         - name: seaweed-config
           persistentVolumeClaim:
               claimName: seaweed-config
-        - name: seaweed-redis
-          persistentVolumeClaim:
-              claimName: seaweed-redis
