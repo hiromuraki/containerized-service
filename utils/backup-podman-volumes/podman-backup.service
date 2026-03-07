@@ -1,0 +1,15 @@
+[Unit]
+Description=Backup Podman Volumes to S3
+After=network-online.target podman.socket
+
+[Service]
+Type=oneshot
+
+Environment=PYTHONUNBUFFERED=1
+EnvironmentFile=/home/daveny/containerized-service/.s3-credentials.env
+
+WorkingDirectory=/home/daveny/containerized-service/utils/backup-podman-volumes
+ExecStart=/opt/workbench/bin/uv run main.py
+
+Restart=on-failure
+RestartSec=3600
