@@ -124,9 +124,11 @@ def main():
     if not args.service:
         parser.print_help()
         sys.exit(0)
+    
+    service_name = args.service[1:] if args.service.startswith("@") else args.service
 
     try:
-        QuadletService(args.service).deploy(kube_mode=args.kube, dry_run=args.dry_run)
+        QuadletService(service_name).deploy(kube_mode=args.kube, dry_run=args.dry_run)
         print("-" * 50)
         reload_systemd_daemon(args.dry_run)
     except Exception as e:
