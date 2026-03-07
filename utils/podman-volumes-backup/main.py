@@ -150,7 +150,7 @@ if __name__ == "__main__":
     print("✅ S3 服务运行正常，准备开始备份。")
 
     for volume_name in get_volume_names():
-        out_file = Path(f"./backups/{volume_name}.tar.gz").absolute()
+        out_file = Path(f"./.backups/{volume_name}.tar.gz").absolute()
 
         try:
             ok = backup_podman_volume(volume_name, out_file)

@@ -7,18 +7,30 @@ from pathlib import Path
 from typing import Literal
 
 DEST_DIR = Path.home() / ".config" / "containers" / "systemd"
+QUADLET_FILE_EXTS = set((".container", ".volume", ".network", ".pod", ".kube", ".image"))
 
 type DeploymentAction = tuple[Path, Path, Literal["link", "skip"]]
+
+
+def is_quadlet_file(path: Path) -> bool:
+    return path.suffix in QUADLET_FILE_EXTS
 
 
 def get_quadlet_files(service_name: str | None) -> list[Path]:
     target_dirs: list[Path] = []
     base_dir = Path.cwd()
+    quadlet_files = []
 
+    # 1. 首先：检查根目录 (base_dir) 下的所有 Quadlet 文件
+    for item in base_dir.iterdir():
+        if item.is_file() and is_quadlet_file(item):
+            quadlet_files.append(item.absolute())
+
+    # 2. 确定需要深入扫描的服务子目录
     if service_name:
         target_path = base_dir / service_name
         if not target_path.is_dir():
-            print(f"Error: Service directory '{service_name}' does not exist.")
+            print(f"❌ 错误：服务目录 '{service_name}' 不存在。")
             sys.exit(1)
         target_dirs.append(target_path)
     else:
@@ -26,17 +38,14 @@ def get_quadlet_files(service_name: str | None) -> list[Path]:
             if item.is_dir() and item.name.startswith('@'):
                 target_dirs.append(item)
 
-    if not target_dirs:
-        return []
-
-    quadlet_files = []
-    for d in target_dirs:
-        quadlet_dir = d / "quadlet"
+    # 3. 遍历目标子目录，扫描其内部的 'quadlet' 文件夹
+    for target_dir in target_dirs:
+        quadlet_dir = target_dir / "quadlet"
         if not quadlet_dir.is_dir():
             continue
 
         for file_path in quadlet_dir.iterdir():
-            if file_path.is_file():
+            if file_path.is_file() and is_quadlet_file(file_path):
                 quadlet_files.append(file_path.absolute())
 
     return quadlet_files

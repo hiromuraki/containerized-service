@@ -6,9 +6,9 @@ After=network-online.target podman.socket
 Type=oneshot
 
 Environment=PYTHONUNBUFFERED=1
-EnvironmentFile=/home/daveny/containerized-service/.s3-credentials.env
+EnvironmentFile=/%h/containerized-service/.s3-credentials.env
 
-WorkingDirectory=/home/daveny/containerized-service/utils/backup-podman-volumes
+WorkingDirectory=%h/containerized-service/utils/podman-volumes-backup
 ExecStart=/opt/workbench/bin/uv run main.py
 
 Restart=on-failure
