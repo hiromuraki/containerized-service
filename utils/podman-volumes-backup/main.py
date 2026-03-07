@@ -124,7 +124,7 @@ def backup_podman_volume(volume_name: str, out_file: Path) -> bool:
                 remove=True,
                 volumes={
                     volume_name: {'bind': '/data', 'mode': 'ro'},
-                    backup_dir: {'bind': '/backup', 'mode': 'rw'}
+                    backup_dir: {'bind': '/backup', 'mode': 'rw,z'} # z 标签以处理 SELinux 下的写入
                 }
             )
 
