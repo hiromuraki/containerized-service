@@ -6,6 +6,16 @@ metadata:
         app: nginx-proxy-manager
 spec:
     restartPolicy: Always
+    initContainers:
+        - name: volume-initializer
+          image: docker.io/library/alpine:latest
+          volumeMounts:
+              - name: nginx-proxy-manager-data
+                mountPath: /mnt/data
+          command:
+              - "sh"
+              - "-c"
+              - "mkdir -p /mnt/data/data && mkdir -p /mnt/data/letsencrypt"
     containers:
         - name: nginx-proxy-manager
           image: docker.io/jc21/nginx-proxy-manager:latest

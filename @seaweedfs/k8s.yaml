@@ -5,6 +5,17 @@ metadata:
     labels:
         app: seaweedfs
 spec:
+    restartPolicy: Always
+    initContainers:
+        - name: volume-initializer
+          image: docker.io/library/alpine:latest
+          volumeMounts:
+              - name: seaweed-data
+                mountPath: /mnt/data
+          command:
+              - "sh"
+              - "-c"
+              - "mkdir -p /mnt/data/volume && mkdir -p /mnt/data/redis"
     containers:
         # 1. Master 主控
         - name: master
