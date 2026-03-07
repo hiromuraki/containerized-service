@@ -22,13 +22,12 @@ spec:
                 value: "Asia/Shanghai"
           volumeMounts:
               - name: nginx-proxy-manager-data
+                subPath: data
                 mountPath: /data
-              - name: nginx-proxy-manager-letsencrypt
+              - name: nginx-proxy-manager-data
+                subPath: letsencrypt
                 mountPath: /etc/letsencrypt
     volumes:
         - name: nginx-proxy-manager-data
           persistentVolumeClaim:
               claimName: nginx-proxy-manager-data
-        - name: nginx-proxy-manager-letsencrypt
-          persistentVolumeClaim:
-              claimName: nginx-proxy-manager-letsencrypt

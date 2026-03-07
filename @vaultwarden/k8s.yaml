@@ -16,7 +16,7 @@ spec:
                 value: "https://vw.daveny.top"
           volumeMounts:
               - name: vaultwarden-data
-                mountPath: /data/
+                mountPath: /data
     volumes:
         - name: vaultwarden-data
           persistentVolumeClaim:
