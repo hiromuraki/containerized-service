@@ -33,9 +33,9 @@ class S3Storage:
     def upload(self, filepath: Path, bucket: str, key: str) -> None:
         self.__s3_client.upload_file(str(filepath), bucket, key)
 
-    def is_available(self, bucket: str) -> bool:
+    def is_available(self) -> bool:
         try:
-            self.__s3_client.head_bucket(Bucket=bucket)
+            self.__s3_client.list_buckets()
             return True
         except Exception as e:
             print(f"❌ S3 服务不可用：{e}")
@@ -143,7 +143,7 @@ def backup_podman_volume(volume_name: str, out_file: Path) -> bool:
 if __name__ == "__main__":
     print("🚀 开始执行全量 Podman 卷备份任务...")
 
-    if not S3.is_available(BUCKET_NAME):
+    if not S3.is_available():
         print("❌ 脚本将退出 (Exit 1) 并等待 Systemd 触发重试。")
         sys.exit(1)
 
