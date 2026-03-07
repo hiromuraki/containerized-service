@@ -27,6 +27,11 @@ spec:
           args: ["filer", "-master=localhost:9333"]
           ports:
               - containerPort: 8888
+          volumeMounts:
+              - name: seaweed-config
+                subPath: filer.toml
+                mountPath: /etc/seaweedfs/filer.toml
+                readOnly: true
 
         # 4. S3 网关
         - name: s3
@@ -42,15 +47,28 @@ spec:
           ports:
               - containerPort: 8333
           volumeMounts:
-              - name: s3-config
+              - name: seaweed-config
+                subPath: s3.json
                 mountPath: /etc/seaweedfs/s3.json
                 readOnly: true
+
+        # 5. redis
+        - name: redis
+          image: docker.io/redis:7-alpine
+          args: ["redis-server", "--appendonly", "yes"]
+          ports:
+              - containerPort: 6379
+          volumeMounts:
+              - name: seaweed-redis
+                mountPath: /data
 
     volumes:
         - name: seaweed-data
           persistentVolumeClaim:
               claimName: seaweed-data
-        - name: s3-config
-          hostPath:
-              path: /home/daveny/containerized-service/config/@seaweedfs/s3.json
-              type: File
+        - name: seaweed-config
+          persistentVolumeClaim:
+              claimName: seaweed-config
+        - name: seaweed-redis
+          persistentVolumeClaim:
+              claimName: seaweed-redis

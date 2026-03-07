@@ -3,7 +3,7 @@ Description=Forgejo
 
 [Kube]
 Yaml=%h/containerized-service/@forgejo/k8s.yaml
-Network=homelab
+Network=homelab.network
 PublishPort=2222:22
 
 [Install]

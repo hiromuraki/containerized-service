@@ -3,7 +3,7 @@ Description=Nginx Proxy Manager
 
 [Kube]
 Yaml=%h/containerized-service/@nginx-proxy-manager/k8s.yaml
-Network=homelab
+Network=homelab.network
 PublishPort=80:80
 PublishPort=81:81
 PublishPort=443:443
