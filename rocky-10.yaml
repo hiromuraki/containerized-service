@@ -1,0 +1,113 @@
+#cloud-config
+hostname: homelab-01
+fqdn: homelab-01.home
+timezone: Asia/Shanghai
+locale: en_US.UTF-8
+manage_etc_hosts: true
+
+# 1. 用户与安全基线
+users:
+    - name: daveny
+      groups: [wheel, adm, systemd-journal]
+      sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+      shell: /bin/bash
+      ssh_authorized_keys:
+          - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIApR7i8PHbeNpvUQ32DuifZyxHveoAsaq9CWe7xfEoNA PC
+          - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJo5owPQy33AvY+id/GLLgLg2GrzojnIVNcMyBGMCUH5 WSL
+
+disable_root: true
+ssh_pwauth: false
+
+# 2. 核心软件包
+package_update: true
+package_upgrade: false
+packages:
+    - qemu-guest-agent
+    - epel-release
+    - podman
+    - git
+    - tmux
+    - wireguard-tools
+
+# 3. 配置文件创建
+write_files:
+    # SSH 服务器配置
+    - path: /etc/ssh/sshd_config.d/99-custom.conf
+      owner: root:root
+      permissions: "0644"
+      content: |
+          # Basic
+          Port 13922
+          AddressFamily inet
+          # Auth
+          PubkeyAuthentication yes
+          PasswordAuthentication no
+          PermitEmptyPasswords no
+          PermitRootLogin no
+          ChallengeResponseAuthentication no
+          KerberosAuthentication no
+          GSSAPIAuthentication no
+          # Access Control
+          AllowUsers daveny
+          DenyUsers root
+          MaxAuthTries 3
+          MaxSessions 5
+          # Optimize
+          ClientAliveInterval 60
+          ClientAliveCountMax 3
+          UseDNS no
+          # Etc
+          X11Forwarding no
+          PermitUserEnvironment no
+          PrintMotd no
+          StrictModes yes
+    # Podman 镜像源
+    - path: /etc/containers/registries.conf.d/99-custom.conf
+      owner: root:root
+      permissions: "0644"
+      content: |
+          unqualified-search-registries = ["docker.io"]
+          [[registry]]
+          prefix = "docker.io"
+          location = "docker.io"
+          insecure = false
+          block = false
+          [[registry.mirror]]
+          location = "docker.1ms.run"
+    # Podman 容器配置
+    - path: /etc/skel/.config/containers/containers.conf
+      owner: root:root
+      permissions: "0644"
+      content: |
+          [containers]
+          tz = "Asia/Shanghai"
+          dns_servers = ["10.8.0.1", "1.1.1.1"]
+          log_size_max = 16777216
+    # 配置特权端口最小值，以允许绑定 :80
+    - path: /etc/sysctl.d/99-rootless-ports.conf
+      owner: root:root
+      permissions: "0644"
+      content: |
+          net.ipv4.ip_unprivileged_port_start=80
+
+# 4. 开机自启与系统配置
+runcmd:
+    # 重载内核参数
+    - sysctl --system
+
+    # 为用户启用 Linger
+    - loginctl enable-linger daveny
+
+    # SELinux 放行新 SSH 端口
+    - semanage port -a -t ssh_port_t -p tcp 13922
+
+    # 激活 qemu-guest-agent
+    - systemctl enable --now qemu-guest-agent
+
+    # 激活 systemd-resolved
+    - systemctl enable --now systemd-resolved
+    - ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+
+    - systemctl restart sshd
+
+final_message: "The system is finally up, after $UPTIME seconds"
