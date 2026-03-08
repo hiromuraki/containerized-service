@@ -6,10 +6,10 @@ After=network-online.target podman.socket
 Type=oneshot
 
 Environment=PYTHONUNBUFFERED=1
-EnvironmentFile=/%h/containerized-service/.env
+EnvironmentFile=/%h/.env
 
 WorkingDirectory=%h/containerized-service/utils/podman-volumes-backup
-ExecStart=/opt/workbench/bin/uv run main.py
+ExecStart=/usr/bin/uv run main.py backup
 
 Restart=on-failure
 RestartSec=3600
