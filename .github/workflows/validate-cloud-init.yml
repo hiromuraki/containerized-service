@@ -15,7 +15,13 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4
 
-            # 2. 使用 cloud-init schema 验证合法性
+            # 2. 安装 cloud-init 工具
+            - name: Install cloud-init
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y cloud-init
+
+            # 3. 使用 cloud-init schema 验证合法性
             - name: Validate cloud-config schema
               run: |
                   if [ ! -d "./cloud-init" ]; then
