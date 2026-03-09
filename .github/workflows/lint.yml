@@ -24,9 +24,27 @@ jobs:
             # 3. 使用 cloud-init schema 验证合法性
             - name: Validate cloud-config schema
               run: |
-                  if [ -f "./rocky-10.yaml" ]; then
-                    cloud-init schema --config-file ./cloud-init/rocky-10.yaml
-                  else
-                    echo "Error: ./cloud-init/rocky-10.yaml not found!"
-                    exit 1
+                  if [ ! -d "./cloud-init" ]; then
+                      echo "Error: Directory ./cloud-init does not exist."
+                      exit 1
+                  fi
+
+                  success=true
+                  for file in ./cloud-init/*; do
+                      if [ -f "$file" ]; then
+                      echo "------------------------------------------------"
+                      echo "Checking: $file"
+                      
+                      # 运行验证
+                      if ! cloud-init schema --config-file "$file"; then
+                          echo "❌ Validation failed for $file"
+                          success=false
+                      else
+                          echo "✅ $file is valid"
+                      fi
+                      fi
+                  done
+
+                  if [ "$success" = false ]; then
+                      exit 1
                   fi
