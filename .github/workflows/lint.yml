@@ -1,0 +1,32 @@
+name: Validate Cloud-Init Config
+
+on:
+    push:
+        branches: ["main"]
+    pull_request:
+        branches: ["main"]
+
+jobs:
+    validate:
+        runs-on: ubuntu-latest
+
+        steps:
+            # 1. 签出代码
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            # 2. 安装 cloud-init 工具
+            - name: Install cloud-init
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y cloud-init
+
+            # 3. 使用 cloud-init schema 验证合法性
+            - name: Validate cloud-config schema
+              run: |
+                  if [ -f "./rocky-10.yaml" ]; then
+                    cloud-init schema --config-file ./cloud-init/rocky-10.yaml
+                  else
+                    echo "Error: ./cloud-init/rocky-10.yaml not found!"
+                    exit 1
+                  fi

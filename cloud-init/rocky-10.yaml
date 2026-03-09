@@ -25,7 +25,6 @@ packages:
     - qemu-guest-agent
     - epel-release
     - podman
-    - git
     - tmux
     - wireguard-tools
 
@@ -89,6 +88,23 @@ write_files:
       permissions: "0644"
       content: |
           net.ipv4.ip_unprivileged_port_start=80
+    # Bash 个性化配置
+    - path: /etc/sysctl.d/99
+      owner: root:root
+      permissions: "0644"
+      content: |
+          # 1. Colored [user@hostname dir]
+          export PS1="[\[\e[32;1m\]\u\[\e[0m\]@\[\e[33;1m\]\h\[\e[0m\] \[\e[34;1m\]\W\[\e[0m\]]\\$ "
+
+          # 2. History with timestamp
+          export HISTTIMEFORMAT="%F %T  "
+
+          # 3. Enable for interactive terminal only
+          if [ -t 1 ]; then
+              alias ls='ls --color=auto'
+              alias ll='ls -alFh --color=auto'
+              alias rm='rm -i'
+          fi
 
 # 4. 开机自启与系统配置
 runcmd:
