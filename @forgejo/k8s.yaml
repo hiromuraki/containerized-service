@@ -19,16 +19,16 @@ spec:
                 value: "1000"
               - name: TZ
                 value: "Asia/Shanghai"
+              - name: FORGEJO__server__ROOT_URL
+                value: https://git.daveny.top/
+              - name: FORGEJO__server__DOMAIN
+                value: git.daveny.top
+              - name: FORGEJO__server__SSH_DOMAIN
+                value: git.daveny.top
           volumeMounts:
               - name: forgejo-data
                 mountPath: /data
-              - name: forgejo-config
-                subPath: app.ini
-                mountPath: /data/gitea/conf/app.ini
     volumes:
         - name: forgejo-data
           persistentVolumeClaim:
               claimName: forgejo-data
-        - name: forgejo-config
-          persistentVolumeClaim:
-              claimName: forgejo-config
