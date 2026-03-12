@@ -94,7 +94,7 @@ write_files:
       permissions: "0644"
       content: |
           # 1. Colored [user@hostname dir]
-          export PS1="[\[\e[32;1m\]\u\[\e[0m\]@\[\e[33;1m\]\h\[\e[0m\] \[\e[34;1m\]\W\[\e[0m\]]\\$ "
+          export PS1="[\[\e[32;1m\]\u\[\e[0m\]@\[\e[33;1m\]\h\[\e[0m\] \[\e[34;1m\]\w\[\e[0m\]]\\$ "
 
           # 2. History with timestamp
           export HISTTIMEFORMAT="%F %T  "

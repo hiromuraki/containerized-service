@@ -7,7 +7,7 @@ on:
         branches: ["main"]
 
 jobs:
-    validate:
+    validate-cloud-init:
         runs-on: ubuntu-latest
 
         steps:
