@@ -23,35 +23,20 @@ def is_quadlet_file(path: Path) -> bool:
     return path.suffix in QUADLET_FILE_EXTS
 
 
-def deploy_quadlet_service(service_name: str, kube_mode: bool, dry_run: bool, ignore_conflict: bool) -> None:
-    service_dir = Path(os.getcwd()) / f"@{service_name}"
-
+def deploy_quadlet_service(service_name: str, service_dir: Path, dry_run: bool, ignore_conflict: bool) -> None:
     if not service_dir.exists():
         raise FileNotFoundError(f"❌ 错误：服务目录 '{service_dir.name}' 不存在 ({service_dir})。")
 
-    print(f"⚙️  部署模式: {'Kubernetes 编排 (.kube)' if kube_mode else '原生容器 (.container / .pod)'}")
+    print(f"⚙️  部署 Quadlet: {service_name}")
 
     # 文件搜集
     link_tasks: list[tuple[Path, Path]] = []
-    common_quadlet_dir = service_dir / "common"
 
-    if common_quadlet_dir.exists() and common_quadlet_dir.is_dir():
-        for item in common_quadlet_dir.iterdir():
-            if item.is_file() and is_quadlet_file(item):
+    container_dir = service_dir
+    if container_dir.exists() and container_dir.is_dir():
+        for item in container_dir.iterdir():
+            if is_quadlet_file(item):
                 link_tasks.append((item.absolute(), QUADLET_TARGET_DIR / item.name))
-
-    if kube_mode:
-        kube_file = service_dir / f"{service_name}.kube"
-        if kube_file.exists() and kube_file.is_file():
-            link_tasks.append((kube_file.absolute(), QUADLET_TARGET_DIR / kube_file.name))
-        else:
-            print(f"⚠️  警告：启用了 Kube 模式，但在预期位置未找到入口文件 '{kube_file.name}'")
-    else:
-        container_dir = service_dir
-        if container_dir.exists() and container_dir.is_dir():
-            for item in container_dir.iterdir():
-                if item.is_file() and (item.name.endswith(".container") or item.name.endswith(".pod")):
-                    link_tasks.append((item.absolute(), QUADLET_TARGET_DIR / item.name))
 
     if not link_tasks:
         print("🤷 未找到任何需要部署的配置文件，操作已跳过。")
@@ -62,7 +47,7 @@ def deploy_quadlet_service(service_name: str, kube_mode: bool, dry_run: bool, ig
         for _, dest in link_tasks:
             if dest.exists() or dest.is_symlink():
                 raise FileExistsError(
-                    f"❌ 部署中断：目标路径已被占用 -> {dest.name}\n   (请先清理 ~/.config/containers/systemd/ 下的冲突文件后再试)")
+                    f"❌ 部署中断：目标路径已被占用 -> {dest}\n   (请先清理 ~/.config/containers/systemd/ 下的冲突文件后再试)")
 
         dest_names = [dest.name for _, dest in link_tasks]
         if len(dest_names) != len(set(dest_names)):
@@ -70,7 +55,7 @@ def deploy_quadlet_service(service_name: str, kube_mode: bool, dry_run: bool, ig
 
     # 执行
     if dry_run:
-        print(f"\n🔍 [Dry Run] 预检模式启动，预计对 '{service_name}' 执行以下操作：")
+        print(f"\n🔍 [Dry Run] 预检模式启动，预计执行以下操作：")
         if not QUADLET_TARGET_DIR.exists():
             print(f"   📁 [创建目录] {QUADLET_TARGET_DIR}")
         for src, dest in link_tasks:
@@ -79,20 +64,18 @@ def deploy_quadlet_service(service_name: str, kube_mode: bool, dry_run: bool, ig
                 continue
             print(f"   🔗 [创建链接] {dest.name} -> {src.relative_to(Path.cwd())}")
         print("\n✅ 预检通过：文件检查无冲突，未执行任何实际修改。")
-        return
+    else:
+        QUADLET_TARGET_DIR.mkdir(parents=True, exist_ok=True)
+        print(f"\n🚀 开始部署 '{service_name}' ...")
 
-    # 实际创建操作
-    QUADLET_TARGET_DIR.mkdir(parents=True, exist_ok=True)
-    print(f"\n🚀 开始部署 '{service_name}' ...")
+        for src, dest in link_tasks:
+            if dest.exists() or dest.is_symlink():
+                print(f"   🔗 已忽略: {dest.name}")
+                continue
+            dest.symlink_to(src)
+            print(f"   🔗 已链接: {dest.name}")
 
-    for src, dest in link_tasks:
-        if dest.exists() or dest.is_symlink():
-            print(f"   🔗 已忽略: {dest.name}")
-            continue
-        dest.symlink_to(src)
-        print(f"   🔗 已链接: {dest.name}")
-
-    print(f"🎉 部署阶段完成")
+        print(f"🎉 部署阶段完成")
 
 
 def reload_systemd_daemon(dry_run: bool):
@@ -120,8 +103,6 @@ def main():
     )
     parser.add_argument('service', type=str, nargs='?', default=None,
                         help="要部署的服务名称 (自动寻找当前目录下的 @<service> 文件夹)")
-    parser.add_argument('--kube', action='store_true',
-                        help="使用 Kube 模式部署 (自动搜集 .kube 文件)")
     parser.add_argument('--dry-run', action='store_true',
                         help="预检模式 (仅打印执行计划，不进行任何实际更改)")
     args = parser.parse_args()
@@ -133,13 +114,9 @@ def main():
     service_name = args.service[1:] if args.service.startswith("@") else args.service
 
     try:
-        deploy_quadlet_service("_share_",
-                               kube_mode=False,
-                               dry_run=args.dry_run,
-                               ignore_conflict=True)
-        print("-" * 50)
-        deploy_quadlet_service(service_name,
-                               kube_mode=args.kube,
+        service_dir = Path(os.getcwd()) / "quadlet" / f"{service_name}"
+        deploy_quadlet_service(service_name=service_name,
+                               service_dir=service_dir,
                                dry_run=args.dry_run,
                                ignore_conflict=False)
         print("-" * 50)

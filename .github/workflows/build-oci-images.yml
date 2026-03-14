@@ -3,6 +3,9 @@ name: Build and Push OCI Images
 on:
     push:
         branches: ["main"]
+        paths:
+            - "oci-image/**"
+            - ".github/workflows/build-oci-images.yml"
     pull_request:
         branches: ["main"]
 
@@ -25,10 +28,10 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4
 
-            - name: Scan oci-images directory
+            - name: Scan oci-image directory
               id: set-matrix
               run: |
-                  cd oci-images
+                  cd oci-image
                   DIRS=$(find . -mindepth 1 -maxdepth 1 -type d -exec test -e '{}/Dockerfile' \; -print | sed 's|^\./||' | jq -R -s -c 'split("\n")[:-1]')
                   echo "Scanning results: $DIRS"
                   echo "matrix=$DIRS" >> $GITHUB_OUTPUT
@@ -80,8 +83,8 @@ jobs:
             - name: Build and push OCI image
               uses: docker/build-push-action@v5
               with:
-                  context: ./oci-images/${{ matrix.target }}
-                  file: ./oci-images/${{ matrix.target }}/Dockerfile
+                  context: ./oci-image/${{ matrix.target }}
+                  file: ./oci-image/${{ matrix.target }}/Dockerfile
                   # 安全规范：如果是 PR，只测试构建（干跑），不真正推送到仓库；只有 push 到 main 才推送
                   push: ${{ github.event_name != 'pull_request' }}
                   tags: ${{ steps.meta.outputs.tags }}

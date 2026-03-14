@@ -1,5 +1,6 @@
 ## 1. 目录结构
 
-- 以 `@` 开头：表示采用 Podman kube + Quadlet 部署
-- 以 `#` 开头：表示采用 Docker Compose 部署
-- `utils`：辅助工具
+- `oci-image`: 容器镜像
+- `quadlet`: Quadlet 服务
+- `kvm-config`: KVM 配置示例
+- `cloud-init`: 云镜像自动部署配置
