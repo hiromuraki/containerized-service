@@ -1,19 +1,19 @@
 #cloud-config
-hostname: homelab-01
-fqdn: homelab-01.home
+hostname: homelab
+fqdn: homelab.home
 timezone: Asia/Shanghai
 locale: en_US.UTF-8
 manage_etc_hosts: true
 
 # 1. 用户与安全基线
 users:
-    - name: daveny
+    - name: homelab
       groups: [wheel, adm, systemd-journal]
       sudo: ["ALL=(ALL) NOPASSWD:ALL"]
       shell: /bin/bash
       ssh_authorized_keys:
-          - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIApR7i8PHbeNpvUQ32DuifZyxHveoAsaq9CWe7xfEoNA PC
-          - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJo5owPQy33AvY+id/GLLgLg2GrzojnIVNcMyBGMCUH5 WSL
+          - 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIApR7i8PHbeNpvUQ32DuifZyxHveoAsaq9CWe7xfEoNA PC'
+          - 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJo5owPQy33AvY+id/GLLgLg2GrzojnIVNcMyBGMCUH5 WSL'
 
 disable_root: true
 ssh_pwauth: false
@@ -26,7 +26,6 @@ packages:
     - epel-release
     - podman
     - tmux
-    - wireguard-tools
 
 # 3. 配置文件创建
 write_files:
@@ -47,7 +46,7 @@ write_files:
           KerberosAuthentication no
           GSSAPIAuthentication no
           # Access Control
-          AllowUsers daveny
+          AllowUsers homelab
           DenyUsers root
           MaxAuthTries 3
           MaxSessions 5
@@ -80,7 +79,6 @@ write_files:
       content: |
           [containers]
           tz = "Asia/Shanghai"
-          dns_servers = ["10.8.0.1", "1.1.1.1"]
           log_size_max = 16777216
     # 配置特权端口最小值，以允许绑定 :80
     - path: /etc/sysctl.d/99-rootless-ports.conf
@@ -89,7 +87,7 @@ write_files:
       content: |
           net.ipv4.ip_unprivileged_port_start=80
     # Bash 个性化配置
-    - path: /etc/sysctl.d/99
+    - path: /etc/profile.d/99-custom-terminal.sh
       owner: root:root
       permissions: "0644"
       content: |
@@ -112,7 +110,7 @@ runcmd:
     - sysctl --system
 
     # 为用户启用 Linger
-    - loginctl enable-linger daveny
+    - loginctl enable-linger homelab
 
     # SELinux 放行新 SSH 端口
     - semanage port -a -t ssh_port_t -p tcp 13922
@@ -120,10 +118,7 @@ runcmd:
     # 激活 qemu-guest-agent
     - systemctl enable --now qemu-guest-agent
 
-    # 激活 systemd-resolved
-    - systemctl enable --now systemd-resolved
-    - ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
-
+    # 重载 SSH 服务
     - systemctl restart sshd
 
 final_message: "The system is finally up, after $UPTIME seconds"
