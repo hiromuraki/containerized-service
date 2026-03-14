@@ -3,7 +3,7 @@ Description=Forgejo Git Service
 After=network-online.target
 
 [Container]
-Image=codeberg.org/forgejo/forgejo:14
+Image=ghcr.io/hiromuraki/containerized-service/forgejo:latest
 ContainerName=forgejo
 
 PublishPort=3000:3000
