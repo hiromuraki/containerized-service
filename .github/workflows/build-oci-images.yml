@@ -1,0 +1,88 @@
+name: Build and Push OCI Images
+
+on:
+    push:
+        branches: ["main"]
+    pull_request:
+        branches: ["main"]
+
+env:
+    # 使用 GitHub 原生镜像仓库
+    REGISTRY: ghcr.io
+    # 镜像前缀格式：ghcr.io/你的GitHub用户名/当前仓库名
+    IMAGE_PREFIX: ${{ github.repository }}
+
+jobs:
+    # ==========================================
+    # 阶段 1：生成构建矩阵
+    # ==========================================
+    prepare-matrix:
+        runs-on: ubuntu-latest
+        outputs:
+            # 将下一步生成的 JSON 数组暴露给下游 Job
+            matrix: ${{ steps.set-matrix.outputs.matrix }}
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Scan oci-images directory
+              id: set-matrix
+              run: |
+                  cd oci-images
+                  DIRS=$(find . -mindepth 1 -maxdepth 1 -type d -exec test -e '{}/Dockerfile' \; -print | sed 's|^\./||' | jq -R -s -c 'split("\n")[:-1]')
+                  echo "Scanning results: $DIRS"
+                  echo "matrix=$DIRS" >> $GITHUB_OUTPUT
+
+    # ==========================================
+    # 阶段 2：使用矩阵并发构建
+    # ==========================================
+    build-and-push:
+        needs: prepare-matrix
+        runs-on: ubuntu-latest
+        # 防御性编程：如果没扫描到任何目录，直接跳过，防止报错
+        if: ${{ needs.prepare-matrix.outputs.matrix != '[]' && needs.prepare-matrix.outputs.matrix != '' }}
+
+        # 开启矩阵策略，GitHub 会为数组里的每个值单独开一台机器跑
+        strategy:
+            fail-fast: false # 即使某个镜像构建失败，其他镜像继续构建
+            matrix:
+                target: ${{ fromJson(needs.prepare-matrix.outputs.matrix) }}
+
+        # 关键权限：允许 Actions 往你的 GitHub Packages 写入镜像
+        permissions:
+            contents: read
+            packages: write
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            # 登录到 GHCR
+            - name: Log in to the Container registry
+              uses: docker/login-action@v3
+              with:
+                  registry: ${{ env.REGISTRY }}
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+
+            # 自动提取 Metadata (生成标签和注释)
+            - name: Extract metadata for Docker
+              id: meta
+              uses: docker/metadata-action@v5
+              with:
+                  # 最终的镜像名：ghcr.io/username/repo/caddy
+                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/${{ matrix.target }}
+                  tags: |
+                      type=raw,value=latest,enable={{is_default_branch}}
+                      type=sha,format=short
+
+            # 执行真正的构建和推送
+            - name: Build and push OCI image
+              uses: docker/build-push-action@v5
+              with:
+                  context: ./oci-images/${{ matrix.target }}
+                  file: ./oci-images/${{ matrix.target }}/Dockerfile
+                  # 安全规范：如果是 PR，只测试构建（干跑），不真正推送到仓库；只有 push 到 main 才推送
+                  push: ${{ github.event_name != 'pull_request' }}
+                  tags: ${{ steps.meta.outputs.tags }}
+                  labels: ${{ steps.meta.outputs.labels }}

@@ -11,11 +11,9 @@ Environment=DOMAIN=https://vw.daveny.top
 
 Volume=vaultwarden-data.volume:/data/
 
-Network=homelab.network
-
 [Service]
 Restart=always
-RestartSec=5
+RestartSec=15
 
 [Install]
 WantedBy=default.target

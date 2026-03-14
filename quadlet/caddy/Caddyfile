@@ -1,0 +1,43 @@
+{
+    # 强制指定使用 Let's Encrypt 的测试环境
+    acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+}
+
+*.daveny.top {
+    tls {
+         dns cloudflare {$CLOUDFLARE_API_TOKEN}
+    }
+
+    @git host git.daveny.top
+    handle @git {
+        reverse_proxy 192.168.31.148:3000
+    }
+
+    @vaultwarden host vw.daveny.top
+    handle @vaultwarden {
+        reverse_proxy 192.168.31.148:3010
+    }
+
+    @openwrt host openwrt.daveny.top
+    handle @openwrt {
+        reverse_proxy 192.168.31.148:19443
+    }
+}
+
+*.daveny.cn {
+    tls {
+        dns alidns {
+            access_key_id {$ALIYUN_ACCESS_KEY_ID}
+            access_key_secret {$ALIYUN_ACCESS_KEY_SECRET}
+        }
+    }
+}
+
+*.citrusmax.cn {
+    tls {
+        dns alidns {
+            access_key_id {$ALIYUN_ACCESS_KEY_ID}
+            access_key_secret {$ALIYUN_ACCESS_KEY_SECRET}
+        }
+    }
+}

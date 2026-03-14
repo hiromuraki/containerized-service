@@ -1,9 +1,0 @@
-[Unit]
-Description=Vaultwarden
-
-[Kube]
-Yaml=%h/containerized-service/@vaultwarden/k8s.yaml
-Network=homelab
-
-[Install]
-WantedBy=default.target

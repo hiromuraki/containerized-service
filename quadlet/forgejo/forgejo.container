@@ -6,20 +6,21 @@ After=network-online.target
 Image=codeberg.org/forgejo/forgejo:14
 ContainerName=forgejo
 
+PublishPort=3000:3000
+PublishPort=2222:22
+
 Environment=USER_UID=1000
 Environment=USER_GID=1000
 Environment=TZ=Asia/Shanghai
+Environment=FORGEJO__server__ROOT_URL=https://git.daveny.top/
+Environment=FORGEJO__server__DOMAIN=git.daveny.top
+Environment=FORGEJO__server__SSH_DOMAIN=git.daveny.top
 
-Volume=forgejo-data.volume:/data
-
-Network=homelab.network
-
-# 只暴露 SSH 端口给物理机，Web 3000 端口在内网里等 NPM 来反代
-PublishPort=2222:22
+Volume=forgejo-data:/data
 
 [Service]
 Restart=always
-RestartSec=5
+RestartSec=15
 
 [Install]
 WantedBy=default.target
