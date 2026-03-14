@@ -6,6 +6,8 @@ After=network-online.target
 Image=docker.io/vaultwarden/server:latest
 ContainerName=vaultwarden
 
+PublishPort=3010:80
+
 Environment=TZ=Asia/Shanghai
 Environment=DOMAIN=https://vw.daveny.top
 
