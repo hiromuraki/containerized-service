@@ -1,6 +1,7 @@
 #!/bin/python3
 
 import os
+import shutil
 import sys
 import argparse
 import subprocess
@@ -60,9 +61,9 @@ def deploy_quadlet_service(service_name: str, service_dir: Path, dry_run: bool, 
             print(f"   📁 [创建目录] {QUADLET_TARGET_DIR}")
         for src, dest in link_tasks:
             if dest.exists() or dest.is_symlink():
-                print(f"   🔗 忽略: {dest.name}")
+                print(f"   📄 忽略: {dest.name}")
                 continue
-            print(f"   🔗 [创建链接] {dest.name} -> {src.relative_to(Path.cwd())}")
+            print(f"   📄 [复制] {dest.name} -> {src.relative_to(Path.cwd())}")
         print("\n✅ 预检通过：文件检查无冲突，未执行任何实际修改。")
     else:
         QUADLET_TARGET_DIR.mkdir(parents=True, exist_ok=True)
@@ -70,10 +71,10 @@ def deploy_quadlet_service(service_name: str, service_dir: Path, dry_run: bool, 
 
         for src, dest in link_tasks:
             if dest.exists() or dest.is_symlink():
-                print(f"   🔗 已忽略: {dest.name}")
+                print(f"   📄 已忽略: {dest.name}")
                 continue
-            dest.symlink_to(src)
-            print(f"   🔗 已链接: {dest.name}")
+            shutil.copy(src, dest)
+            print(f"   📄 已复制: {dest.name}")
 
         print(f"🎉 部署阶段完成")
 
