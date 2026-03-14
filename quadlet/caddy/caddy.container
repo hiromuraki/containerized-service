@@ -3,7 +3,7 @@ Description=Caddy Reverse Proxy Gateway
 After=network-online.target
 
 [Container]
-Image=localhost/temp:temp
+Image=ghcr.io/hiromuraki/containerized-service/caddy:latest
 ContainerName=caddy-gateway
 
 PublishPort=80:80
