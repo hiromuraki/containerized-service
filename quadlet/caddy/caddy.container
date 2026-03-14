@@ -9,10 +9,10 @@ ContainerName=caddy-gateway
 PublishPort=80:80
 PublishPort=443:443
 
-Volume=/home/user/downloads/caddy/Caddyfile:/etc/caddy/Caddyfile:ro,Z
+Volume=%h/caddy/Caddyfile:/etc/caddy/Caddyfile:ro,Z
 Volume=caddy-data.volume:/data
 
-EnvironmentFile=/home/user/downloads/caddy/caddy.env
+EnvironmentFile=%h/caddy/caddy.env
 
 [Service]
 Restart=always

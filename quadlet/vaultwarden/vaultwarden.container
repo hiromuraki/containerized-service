@@ -13,7 +13,7 @@ Volume=vaultwarden-data.volume:/data/
 
 [Service]
 Restart=always
-RestartSec=15
+RestartSec=10
 
 [Install]
 WantedBy=default.target
