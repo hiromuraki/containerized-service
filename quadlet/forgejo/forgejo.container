@@ -7,7 +7,8 @@ Image=ghcr.io/hiromuraki/containerized-service/forgejo:latest
 ContainerName=forgejo
 
 PublishPort=127.0.0.1:3000:3000
-PublishPort=127.0.0.1:2222:22
+# 2222 SSH 端口不方便反代，且 SSH 本身足够安全，直接监听所有网口即可
+PublishPort=2222:22
 
 Environment=USER_UID=1000
 Environment=USER_GID=1000
@@ -15,6 +16,8 @@ Environment=TZ=Asia/Shanghai
 Environment=FORGEJO__server__ROOT_URL=https://git.daveny.top/
 Environment=FORGEJO__server__DOMAIN=git.daveny.top
 Environment=FORGEJO__server__SSH_DOMAIN=git.daveny.top
+Environment=FORGEJO__server__HTTP_PORT=3000
+Environment=FORGEJO__server__SSH_PORT=2222
 
 Volume=forgejo-data:/data
 
