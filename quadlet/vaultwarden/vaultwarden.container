@@ -6,7 +6,7 @@ After=network-online.target
 Image=ghcr.io/hiromuraki/containerized-service/vaultwarden:latest
 ContainerName=vaultwarden
 
-PublishPort=3010:80
+PublishPort=127.0.0.1:3010:80
 
 Environment=TZ=Asia/Shanghai
 Environment=DOMAIN=https://vw.daveny.top

@@ -6,6 +6,7 @@ After=network-online.target
 Image=ghcr.io/hiromuraki/containerized-service/caddy:latest
 ContainerName=caddy-gateway
 
+Network=host
 PublishPort=80:80
 PublishPort=443:443
 
