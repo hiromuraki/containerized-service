@@ -26,6 +26,7 @@ jobs:
 
     # 阶段 1：生成构建矩阵
     prepare-matrix:
+        needs: [gatekeeper]
         runs-on: ubuntu-latest
         outputs:
             # 将下一步生成的 JSON 数组暴露给下游 Job
