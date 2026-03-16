@@ -16,9 +16,15 @@ env:
     IMAGE_PREFIX: ${{ github.repository }}
 
 jobs:
-    # ==========================================
+    # 阶段 0：平台验证，仅在 GitHub 执行镜像构建
+    gatekeeper:
+        if: github.server_url != 'https://github.com'
+        runs-on: ubuntu-latest
+        steps:
+            - name: Environment Check
+              run: true
+
     # 阶段 1：生成构建矩阵
-    # ==========================================
     prepare-matrix:
         runs-on: ubuntu-latest
         outputs:
@@ -36,9 +42,7 @@ jobs:
                   echo "Scanning results: $DIRS"
                   echo "matrix=$DIRS" >> $GITHUB_OUTPUT
 
-    # ==========================================
     # 阶段 2：使用矩阵并发构建
-    # ==========================================
     build-and-push:
         needs: prepare-matrix
         runs-on: ubuntu-latest
