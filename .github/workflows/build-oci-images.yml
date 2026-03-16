@@ -18,7 +18,7 @@ env:
 jobs:
     # 阶段 0：平台验证，仅在 GitHub 执行镜像构建
     gatekeeper:
-        if: github.server_url != 'https://github.com'
+        if: github.server_url == 'https://github.com'
         runs-on: ubuntu-latest
         steps:
             - name: Environment Check
