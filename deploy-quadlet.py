@@ -24,7 +24,7 @@ def is_quadlet_file(path: Path) -> bool:
     return path.suffix in QUADLET_FILE_EXTS
 
 
-def deploy_quadlet_service(service_name: str, service_dir: Path, dry_run: bool, ignore_conflict: bool) -> None:
+def deploy_quadlet_service(service_name: str, service_dir: Path, dry_run: bool, allow_override: bool) -> None:
     if not service_dir.exists():
         raise FileNotFoundError(f"❌ 错误：服务目录 '{service_dir.name}' 不存在 ({service_dir})。")
 
@@ -44,15 +44,18 @@ def deploy_quadlet_service(service_name: str, service_dir: Path, dry_run: bool, 
         return
 
     # 重名检查
-    if not ignore_conflict:
+    dest_names = [dest.name for _, dest in link_tasks]
+    if len(dest_names) != len(set(dest_names)):
+        raise ValueError("❌ 部署中断：本次部署的源文件中存在同名文件，会导致覆盖冲突")
+
+    if not allow_override:
+        conflict_files: list[str] = []
         for _, dest in link_tasks:
             if dest.exists() or dest.is_symlink():
-                raise FileExistsError(
-                    f"❌ 部署中断：目标路径已被占用 -> {dest}\n   (请先清理 ~/.config/containers/systemd/ 下的冲突文件后再试)")
+                conflict_files.append(str(dest))
 
-        dest_names = [dest.name for _, dest in link_tasks]
-        if len(dest_names) != len(set(dest_names)):
-            raise ValueError("❌ 部署中断：本次部署的源文件中存在同名文件，会导致覆盖冲突")
+        if conflict_files:
+            raise FileExistsError(f"❌ 部署中断：目标路径已被占用\n{'\n'.join(conflict_files)}")
 
     # 执行
     if dry_run:
@@ -61,18 +64,18 @@ def deploy_quadlet_service(service_name: str, service_dir: Path, dry_run: bool, 
             print(f"   📁 [创建目录] {QUADLET_TARGET_DIR}")
         for src, dest in link_tasks:
             if dest.exists() or dest.is_symlink():
-                print(f"   📄 忽略: {dest.name}")
-                continue
-            print(f"   📄 [复制] {dest.name} -> {src.relative_to(Path.cwd())}")
-        print("\n✅ 预检通过：文件检查无冲突，未执行任何实际修改。")
+                print(f"   🗑 移除: {dest.name}")
+            print(f"   📄 [复制] {src.relative_to(Path.cwd())} -> {dest}")
+        print("\n✅ 未执行任何实际修改。")
     else:
         QUADLET_TARGET_DIR.mkdir(parents=True, exist_ok=True)
         print(f"\n🚀 开始部署 '{service_name}' ...")
 
         for src, dest in link_tasks:
             if dest.exists() or dest.is_symlink():
-                print(f"   📄 已忽略: {dest.name}")
-                continue
+                os.remove(dest)
+                print(f"   🗑 已移除: {dest.name}")
+
             shutil.copy(src, dest)
             print(f"   📄 已复制: {dest.name}")
 
@@ -106,6 +109,8 @@ def main():
                         help="要部署的服务名称 (自动寻找当前目录下的 @<service> 文件夹)")
     parser.add_argument('--dry-run', action='store_true',
                         help="预检模式 (仅打印执行计划，不进行任何实际更改)")
+    parser.add_argument("--override", action="store_true",
+                        help="启用覆盖，允许覆盖现有文件")
     args = parser.parse_args()
 
     if not args.service:
@@ -119,7 +124,7 @@ def main():
         deploy_quadlet_service(service_name=service_name,
                                service_dir=service_dir,
                                dry_run=args.dry_run,
-                               ignore_conflict=False)
+                               allow_override=args.override)
         print("-" * 50)
         reload_systemd_daemon(args.dry_run)
         print(f"✅ 启动命令：systemctl --user start {service_name}")
