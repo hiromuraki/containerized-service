@@ -2,7 +2,7 @@ name: forgejo-ci-runner
 
 services:
     ci_runner:
-        build: ./runner
+        image: ghcr.io/hiromuraki/containerized-service/forgejo-runner:latest
         container_name: forgejo-ci-runner
         restart: always
         network_mode: host
