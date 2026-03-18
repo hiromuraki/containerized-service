@@ -6,8 +6,7 @@ After=network-online.target
 Image=ghcr.io/hiromuraki/containerized-service/drawio:latest
 ContainerName=drawio
 
-PublishPort=127.0.0.1:8080:8080
-PublishPort=127.0.0.1:8443:84443
+PublishPort=127.0.0.1:3020:8080
 
 Environment=TZ=Asia/Shanghai
 
