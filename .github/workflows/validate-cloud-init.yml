@@ -3,6 +3,9 @@ name: Validate Cloud-Init Config
 on:
     push:
         branches: ["main"]
+        paths:
+            - "cloud-init/**"
+            - ".github/workflows/validate-cloud-init.yml"
     pull_request:
         branches: ["main"]
 
