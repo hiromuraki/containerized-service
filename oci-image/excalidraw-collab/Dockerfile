@@ -1,0 +1,1 @@
+FROM excalidraw/excalidraw-room:latest

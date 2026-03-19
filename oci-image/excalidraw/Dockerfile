@@ -10,7 +10,7 @@ RUN --mount=type=cache,target=/root/.cache/yarn \
 
 ARG NODE_ENV=production
 
-ENV VITE_APP_WS_SERVER_URL=https://draw-collab.daveny.top
+ENV VITE_APP_WS_SERVER_URL=http://172.17.97.177:3002
 
 RUN npm_config_target_arch=${TARGETARCH} yarn build:app:docker
 
