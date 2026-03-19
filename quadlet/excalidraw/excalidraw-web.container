@@ -1,0 +1,17 @@
+[Unit]
+Description=Excalidraw Service
+After=network-online.target
+
+[Container]
+Image=ghcr.io/hiromuraki/containerized-service/excalidraw:latest
+ContainerName=excalidraw
+Pod=excalidraw.pod
+
+Environment=TZ=Asia/Shanghai
+
+[Service]
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target

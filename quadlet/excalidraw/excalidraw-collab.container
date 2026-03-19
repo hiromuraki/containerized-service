@@ -1,0 +1,18 @@
+[Unit]
+Description=Excalidraw Collaboration Service
+After=network-online.target
+
+[Container]
+Image=ghcr.io/hiromuraki/containerized-service/excalidraw-collab:latest
+ContainerName=excalidraw-collab
+Pod=excalidraw.pod
+
+Environment=PORT=81
+Environment=TZ=Asia/Shanghai
+
+[Service]
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target
