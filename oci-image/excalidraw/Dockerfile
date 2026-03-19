@@ -18,6 +18,7 @@ FROM --platform=${TARGETPLATFORM} nginx:1.29-alpine
 
 COPY --from=build /opt/node_app/excalidraw-app/build /usr/share/nginx/html
 COPY ./entrypoint.sh /bin/entrypoint.sh
+RUN chmod +x /bin/entrypoint.sh
 
 HEALTHCHECK CMD wget -q -O /dev/null http://localhost || exit 1
 
