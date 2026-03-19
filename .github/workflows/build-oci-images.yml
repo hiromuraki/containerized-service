@@ -22,7 +22,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Environment Check
-              run: true
+              run: echo ""
 
     # 阶段 1：生成构建矩阵
     prepare-matrix:
