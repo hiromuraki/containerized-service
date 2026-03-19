@@ -26,3 +26,5 @@ HEALTHCHECK CMD wget -q -O /dev/null http://localhost || exit 1
 EXPOSE 80
 
 ENTRYPOINT [ "/bin/entrypoint.sh" ]
+
+CMD ["nginx", "-g", "daemon off;"]
