@@ -1,17 +1,20 @@
-FROM node:24-alpine AS build
+FROM --platform=${BUILDPLATFORM} node:24-alpine AS build
+
+WORKDIR /opt/node_app
+
+RUN apk add --no-cache git
+RUN git clone --depth=1 https://github.com/excalidraw/excalidraw.git .
+
+RUN --mount=type=cache,target=/root/.cache/yarn \
+    npm_config_target_arch=${TARGETARCH} yarn --network-timeout 600000
 
 ARG NODE_ENV=production
 
 ENV VITE_APP_WS_SERVER_URL=https://draw-collab.daveny.top
 
-WORKDIR /opt/node_app
+RUN npm_config_target_arch=${TARGETARCH} yarn build:app:docker
 
-RUN apk add --no-cache git
-RUN git clone https://github.com/excalidraw/excalidraw.git .
-
-RUN yarn build:app:docker
-
-FROM nginx:1.29-alpine
+FROM --platform=${TARGETPLATFORM} nginx:1.29-alpine
 
 COPY --from=build /opt/node_app/excalidraw-app/build /usr/share/nginx/html
 
