@@ -8,7 +8,7 @@ ContainerName=excalidraw-collab
 Pod=excalidraw.pod
 
 # 固定为 81 端口用于 Pod Publish Ports 映射
-PORT=81
+Environment=PORT=81
 EnvironmentFile=%h/.env.excalidraw-collab
 
 [Service]
