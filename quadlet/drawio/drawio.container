@@ -5,6 +5,7 @@ After=network-online.target
 [Container]
 Image=ghcr.io/hiromuraki/containerized-service/drawio:latest
 ContainerName=drawio
+Pod=drawio.pod
 
 EnvironmentFile=%h/.env.drawio
 

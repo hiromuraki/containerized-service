@@ -5,10 +5,9 @@ After=network-online.target
 [Container]
 Image=ghcr.io/hiromuraki/containerized-service/vaultwarden:latest
 ContainerName=vaultwarden
+Pod=vaultwarden.pod
 
 EnvironmentFile=%h/.env.vaultwarden
-
-PublishPort=127.0.0.1:3010:80
 
 Volume=vaultwarden-data.volume:/data/
 

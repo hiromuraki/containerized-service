@@ -5,12 +5,11 @@ After=network-online.target
 [Container]
 Image=ghcr.io/hiromuraki/containerized-service/caddy:latest
 ContainerName=caddy-gateway
+Pod=caddy.pod
 
 EnvironmentFile=%h/caddy/.env.caddy
 
 Network=host
-PublishPort=80:80
-PublishPort=443:443
 
 Volume=%h/caddy/Caddyfile:/etc/caddy/Caddyfile:ro,Z
 Volume=caddy-data.volume:/data
