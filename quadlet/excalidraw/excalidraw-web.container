@@ -7,8 +7,7 @@ Image=ghcr.io/hiromuraki/containerized-service/excalidraw:latest
 ContainerName=excalidraw
 Pod=excalidraw.pod
 
-Environment=EXCALIDRAW_WS_URL=https://draw-collab.daveny.top
-Environment=TZ=Asia/Shanghai
+EnvironmentFile=%h/.env.excalidraw
 
 [Service]
 Restart=always

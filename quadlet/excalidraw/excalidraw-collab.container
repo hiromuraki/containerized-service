@@ -7,8 +7,9 @@ Image=ghcr.io/hiromuraki/containerized-service/excalidraw-collab:latest
 ContainerName=excalidraw-collab
 Pod=excalidraw.pod
 
-Environment=PORT=81
-Environment=TZ=Asia/Shanghai
+# 固定为 81 端口用于 Pod Publish Ports 映射
+PORT=81
+EnvironmentFile=%h/.env.excalidraw-collab
 
 [Service]
 Restart=always
