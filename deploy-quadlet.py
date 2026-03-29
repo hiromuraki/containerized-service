@@ -127,7 +127,7 @@ def main():
                                allow_override=args.override)
         print("-" * 50)
         reload_systemd_daemon(args.dry_run)
-        print(f"✅ 启动命令：systemctl --user start {service_name}")
+        print(f"✅ 启动命令：systemctl --user start {service_name}-pod")
     except Exception as e:
         print(f"\n{e}")
         sys.exit(1)

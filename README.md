@@ -22,7 +22,17 @@
   - 3030: 主站点
   - 3031: 协同服务器
 
-## 3. KVM 配置建议
+## 3. 服务拉起
+
+```bash
+systemctl --user restart drawio-pod
+systemctl --user restart forgejo-pod
+systemctl --user restart caddy-pod
+systemctl --user restart vaultwarden-pod
+systemctl --user restart excalidraw-pod
+```
+
+## 4. KVM 配置建议
 
 - **OpenWrt**
 
