@@ -1,1 +1,3 @@
 [Pod]
+PodName=caddy
+Network=host

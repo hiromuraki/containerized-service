@@ -9,8 +9,6 @@ Pod=caddy.pod
 
 EnvironmentFile=%h/caddy/.env.caddy
 
-Network=host
-
 Volume=%h/caddy/Caddyfile:/etc/caddy/Caddyfile:ro,Z
 Volume=caddy-data.volume:/data
 

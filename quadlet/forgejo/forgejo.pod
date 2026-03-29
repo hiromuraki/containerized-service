@@ -1,4 +1,5 @@
 [Pod]
+PodName=forgejo
 PublishPort=127.0.0.1:3000:3000
 # 2222 SSH 端口不方便反代，且 SSH 本身足够安全，直接监听所有网口即可
 PublishPort=2222:22

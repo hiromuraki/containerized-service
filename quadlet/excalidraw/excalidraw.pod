@@ -1,3 +1,4 @@
 [Pod]
+PodName=excalidraw
 PublishPort=3030:80
 PublishPort=3031:81
