@@ -9,8 +9,6 @@ Pod=drawio.pod
 
 EnvironmentFile=%h/.env.drawio
 
-PublishPort=127.0.0.1:3020:8080
-
 [Service]
 Restart=always
 RestartSec=10
