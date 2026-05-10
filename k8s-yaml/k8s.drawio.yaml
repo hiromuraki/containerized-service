@@ -1,0 +1,27 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: drawio-env
+data:
+    TZ: "Asia/Shanghai"
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+    name: drawio
+    labels:
+        app: drawio
+spec:
+    restartPolicy: Always
+    containers:
+        - name: drawio
+          image: ghcr.io/hiromuraki/containerized-service/drawio:latest
+          envFrom:
+              - configMapRef:
+                    name: drawio-env
+          ports:
+              - containerPort: 8080
+                hostPort: 3020
+                hostIP: 127.0.0.1
