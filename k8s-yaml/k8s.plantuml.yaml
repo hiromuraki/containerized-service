@@ -1,0 +1,27 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: plantuml-env
+data:
+    TZ: "Asia/Shanghai"
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+    name: plantuml
+    labels:
+        app: plantuml
+spec:
+    restartPolicy: Always
+    containers:
+        - name: plantuml
+          image: ghcr.io/hiromuraki/containerized-service/plantuml:latest
+          envFrom:
+              - configMapRef:
+                    name: plantuml-env
+          ports:
+              - containerPort: 8080
+                hostPort: 3040
+                hostIP: 127.0.0.1
