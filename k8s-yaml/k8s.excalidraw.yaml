@@ -1,0 +1,48 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: excalidraw-web-env
+data:
+    EXCALIDRAW_WS_URL: https://excalidraw-collab.daveny.top
+    TZ: Asia/Shanghai
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: excalidraw-collab-env
+data:
+    TZ: Asia/Shanghai
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+    name: excalidraw
+    labels:
+        app: excalidraw
+spec:
+    restartPolicy: Always
+    containers:
+        - name: excalidraw-web
+          image: ghcr.io/hiromuraki/containerized-service/excalidraw:latest
+          envFrom:
+              - configMapRef:
+                    name: excalidraw-web-env
+          ports:
+              - containerPort: 80
+                hostPort: 3030
+                hostIP: 127.0.0.1
+        - name: excalidraw-collab
+          image: ghcr.io/hiromuraki/containerized-service/excalidraw-collab:latest
+          env:
+              - name: PORT
+                value: "81"
+          envFrom:
+              - configMapRef:
+                    name: excalidraw-collab-env
+          ports:
+              - containerPort: 81
+                hostPort: 3031
+                hostIP: 127.0.0.1
