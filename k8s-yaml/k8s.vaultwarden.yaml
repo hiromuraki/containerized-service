@@ -6,6 +6,7 @@ metadata:
 data:
     TZ: Asia/Shanghai
     DOMAIN: https://vw.daveny.top
+    SIGNUPS_ALLOWED: false
 
 ---
 apiVersion: v1
