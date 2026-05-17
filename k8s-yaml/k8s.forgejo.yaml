@@ -12,10 +12,14 @@ data:
     FORGEJO__server__SSH_DOMAIN: "git.daveny.top"
     FORGEJO__server__HTTP_PORT: 3000
     FORGEJO__server__SSH_PORT: 2222
-    DISABLE_REGISTRATION: true # 禁用注册
-    REQUIRE_SIGNIN_VIEW: true # 强制登录后才能访问页面
-    ENABLE_OPENID_SIGNIN: false # 禁用 OpenID 登录
-    ENABLE_OPENID_SIGNUP: false # 禁用 OpenID 注册
+    # 禁用注册
+    DISABLE_REGISTRATION: true
+    # 强制登录后才能访问页面
+    REQUIRE_SIGNIN_VIEW: true
+    # 禁用 OpenID 登录
+    ENABLE_OPENID_SIGNIN: false
+    # 禁用 OpenID 注册
+    ENABLE_OPENID_SIGNUP: false
 
 ---
 apiVersion: v1

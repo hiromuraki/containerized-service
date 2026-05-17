@@ -1,0 +1,73 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+    name: caddy-env
+stringData:
+    ALIYUN_ACCESS_KEY_ID: ""
+    ALIYUN_ACCESS_KEY_SECRET: ""
+    CLOUDFLARE_API_TOKEN: ""
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: caddyfile
+data:
+    Caddyfile: |
+        {
+            # 使用 Let's Encrypt 的测试环境
+            # acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+        }
+
+        *.daveny.top {
+            tls {
+                dns cloudflare {$CLOUDFLARE_API_TOKEN}
+            }
+        }
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: caddy-data
+spec:
+    accessModes:
+        - ReadWriteOnce
+    resources:
+        requests:
+            storage: 1Gi
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+    name: caddy
+    labels:
+        app: caddy
+spec:
+    hostNetwork: true
+    restartPolicy: Always
+    containers:
+        - name: caddy-gateway
+          image: ghcr.io/hiromuraki/containerized-service/caddy:latest
+          envFrom:
+              - secretRef:
+                    name: caddy-env
+          ports:
+              - containerPort: 80
+              - containerPort: 443
+          volumeMounts:
+              - name: caddy-data
+                mountPath: /data
+              - name: caddyfile
+                mountPath: /etc/caddy/Caddyfile
+                subPath: Caddyfile
+                readOnly: true
+    volumes:
+        - name: caddy-data
+          persistentVolumeClaim:
+              claimName: caddy-data
+        - name: caddyfile
+          configMap:
+              name: caddyfile
