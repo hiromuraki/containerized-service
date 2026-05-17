@@ -4,14 +4,18 @@ kind: ConfigMap
 metadata:
     name: forgejo-env
 data:
-    USER_UID: "1000"
-    USER_GID: "1000"
+    USER_UID: 1000
+    USER_GID: 1000
     TZ: "Asia/Shanghai"
     FORGEJO__server__ROOT_URL: "https://git.daveny.top/"
     FORGEJO__server__DOMAIN: "git.daveny.top"
     FORGEJO__server__SSH_DOMAIN: "git.daveny.top"
     FORGEJO__server__HTTP_PORT: 3000
     FORGEJO__server__SSH_PORT: 2222
+    DISABLE_REGISTRATION: true # 禁用注册
+    REQUIRE_SIGNIN_VIEW: true # 强制登录后才能访问页面
+    ENABLE_OPENID_SIGNIN: false # 禁用 OpenID 登录
+    ENABLE_OPENID_SIGNUP: false # 禁用 OpenID 注册
 
 ---
 apiVersion: v1
@@ -44,7 +48,6 @@ spec:
               - containerPort: 3000
                 hostPort: 3000
                 hostIP: 127.0.0.1
-              # 对应 PublishPort=2222:22 (监听所有网卡)
               # 2222 SSH 端口不方便反代，且 SSH 本身足够安全，所以直接监听所有网口即可
               - containerPort: 22
                 hostPort: 2222
