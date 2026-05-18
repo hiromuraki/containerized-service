@@ -9,9 +9,6 @@ on:
     pull_request:
         branches: ["main"]
 
-env:
-    # 镜像完整名：<registry>/<用户名>/<仓库名>/镜像名:tag
-    IMAGE_PREFIX: ${{ github.repository }}
 
 jobs:
     # 阶段 0：平台验证，仅在 GitHub 执行镜像构建
@@ -100,10 +97,11 @@ jobs:
               id: meta
               uses: docker/metadata-action@v5
               with:
-                  # 最终镜像名：ghcr.io/用户名/镜像名
+                  # 最终镜像名：ghcr.io/用户名/仓库名/镜像名:tag
+                  # 最终镜像名：<aliyun_registry>/<aliyun_registry_namespace>/镜像名:tag
                   images: |
-                      ghcr.io/${{ env.IMAGE_PREFIX }}/${{ matrix.target }}
-                      ${{ secrets.ALIYUN_REGISTRY }}/${{ env.IMAGE_PREFIX }}/${{ matrix.target }}
+                      ghcr.io/${{ github.repository }}/${{ matrix.target }}
+                      ${{ secrets.ALIYUN_REGISTRY }}/${{ secrets.ALIYUN_REGISTRY_NAMESPACE }}/${{ matrix.target }}
                   tags: |
                       type=raw,value=latest,enable={{is_default_branch}}
                       type=sha,format=short
