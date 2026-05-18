@@ -10,10 +10,8 @@ on:
         branches: ["main"]
 
 env:
-    # 使用 GitHub 原生镜像仓库
-    REGISTRY: ghcr.io
-    # 镜像前缀格式：ghcr.io/你的GitHub用户名/当前仓库名
-    IMAGE_PREFIX: ${{ github.repository }}
+    # 镜像前缀：ghcr.io/<用户名>
+    IMAGE_PREFIX: ${{ github.repository_owner }}
 
 jobs:
     # 阶段 0：平台验证，仅在 GitHub 执行镜像构建
@@ -35,12 +33,28 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4
 
-            - name: Scan oci-image directory
+            - name: Detect changed images
               id: set-matrix
               run: |
                   cd oci-image
-                  DIRS=$(find . -mindepth 1 -maxdepth 1 -type d -exec test -e '{}/Dockerfile' \; -print | sed 's|^\./||' | jq -R -s -c 'split("\n")[:-1]')
-                  echo "Scanning results: $DIRS"
+
+                  # 获取本次 push/PR 变更的文件列表
+                  if [ "${{ github.event_name }}" = "pull_request" ]; then
+                      CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+                  elif git rev-parse HEAD^ >/dev/null 2>&1; then
+                      CHANGED=$(git diff --name-only HEAD^ HEAD)
+                  else
+                      CHANGED=""
+                  fi
+
+                  # 工作流文件变更或首次提交 → 构建全部
+                  if [ -z "$CHANGED" ] || echo "$CHANGED" | grep -q '^\.github/workflows/'; then
+                      DIRS=$(find . -mindepth 1 -maxdepth 1 -type d -exec test -e '{}/Dockerfile' \; -print | sed 's|^\./||' | jq -R -s -c 'split("\n")[:-1]')
+                  else
+                      DIRS=$(echo "$CHANGED" | grep '^oci-image/' | cut -d/ -f2 | sort -u | while read d; do [ -f "$d/Dockerfile" ] && echo "$d"; done | jq -R -s -c 'split("\n")[:-1]')
+                  fi
+
+                  echo "Selected directories: $DIRS"
                   echo "matrix=$DIRS" >> $GITHUB_OUTPUT
 
     # 阶段 2：使用矩阵并发构建
@@ -66,20 +80,30 @@ jobs:
               uses: actions/checkout@v4
 
             # 登录到 GHCR
-            - name: Log in to the Container registry
+            - name: Log in to GHCR
               uses: docker/login-action@v3
               with:
-                  registry: ${{ env.REGISTRY }}
+                  registry: ghcr.io
                   username: ${{ github.actor }}
                   password: ${{ secrets.GITHUB_TOKEN }}
+
+            # 登录到阿里云 ACR
+            - name: Log in to ACR
+              uses: docker/login-action@v3
+              with:
+                  registry: ${{ secrets.ALIYUN_REGISTRY }}
+                  username: ${{ secrets.ALIYUN_REGISTRY_USER }}
+                  password: ${{ secrets.ALIYUN_REGISTRY_PASSWORD }}
 
             # 自动提取 Metadata (生成标签和注释)
             - name: Extract metadata for Docker
               id: meta
               uses: docker/metadata-action@v5
               with:
-                  # 最终的镜像名：ghcr.io/username/repo/caddy
-                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/${{ matrix.target }}
+                  # 最终镜像名：ghcr.io/用户名/镜像名
+                  images: |
+                      ghcr.io/${{ env.IMAGE_PREFIX }}/${{ matrix.target }}
+                      ${{ secrets.ALIYUN_REGISTRY }}/${{ env.IMAGE_PREFIX }}/${{ matrix.target }}
                   tags: |
                       type=raw,value=latest,enable={{is_default_branch}}
                       type=sha,format=short
