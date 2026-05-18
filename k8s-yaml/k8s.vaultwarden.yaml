@@ -4,9 +4,9 @@ kind: ConfigMap
 metadata:
     name: vaultwarden-env
 data:
-    TZ: Asia/Shanghai
-    DOMAIN: https://vw.daveny.top
-    SIGNUPS_ALLOWED: false
+    TZ: "Asia/Shanghai"
+    DOMAIN: "https://vw.daveny.top"
+    SIGNUPS_ALLOWED: "false"
 
 ---
 apiVersion: v1

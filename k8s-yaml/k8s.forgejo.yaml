@@ -4,22 +4,22 @@ kind: ConfigMap
 metadata:
     name: forgejo-env
 data:
-    USER_UID: 1000
-    USER_GID: 1000
+    USER_UID: "1000"
+    USER_GID: "1000"
     TZ: "Asia/Shanghai"
     FORGEJO__server__ROOT_URL: "https://git.daveny.top/"
     FORGEJO__server__DOMAIN: "git.daveny.top"
     FORGEJO__server__SSH_DOMAIN: "git.daveny.top"
-    FORGEJO__server__HTTP_PORT: 3000
-    FORGEJO__server__SSH_PORT: 2222
+    FORGEJO__server__HTTP_PORT: "3000"
+    FORGEJO__server__SSH_PORT: "2222"
     # 禁用注册
-    DISABLE_REGISTRATION: true
+    FORGEJO__service__DISABLE_REGISTRATION: "true"
     # 强制登录后才能访问页面
-    REQUIRE_SIGNIN_VIEW: true
+    FORGEJO__service__REQUIRE_SIGNIN_VIEW: "true"
     # 禁用 OpenID 登录
-    ENABLE_OPENID_SIGNIN: false
+    FORGEJO__service__ENABLE_OPENID_SIGNIN: "false"
     # 禁用 OpenID 注册
-    ENABLE_OPENID_SIGNUP: false
+    FORGEJO__service__ENABLE_OPENID_SIGNUP: "false"
 
 ---
 apiVersion: v1

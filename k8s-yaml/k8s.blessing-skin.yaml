@@ -4,7 +4,7 @@ kind: ConfigMap
 metadata:
     name: blessing-skin-env
 data:
-    TZ: Asia/Shanghai
+    TZ: "Asia/Shanghai"
 
 ---
 apiVersion: v1

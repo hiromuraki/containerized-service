@@ -4,6 +4,7 @@ kind: Secret
 metadata:
     name: caddy-env
 stringData:
+    TZ: Asia/Shanghai
     ALIYUN_ACCESS_KEY_ID: ""
     ALIYUN_ACCESS_KEY_SECRET: ""
     CLOUDFLARE_API_TOKEN: ""
