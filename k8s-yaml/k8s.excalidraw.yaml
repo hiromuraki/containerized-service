@@ -4,7 +4,7 @@ kind: ConfigMap
 metadata:
     name: excalidraw-web-env
 data:
-    EXCALIDRAW_WS_URL: "https://excalidraw-collab.daveny.top"
+    EXCALIDRAW_WS_URL: "https://excalidraw-collab.daveny.cn"
     TZ: "Asia/Shanghai"
 
 ---
