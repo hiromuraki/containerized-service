@@ -1,0 +1,1 @@
+FROM docker.io/chrislusf/seaweedfs:latest
