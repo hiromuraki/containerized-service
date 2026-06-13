@@ -3,6 +3,7 @@
 ## 1. 目录结构
 
 - **oci-image**: 容器镜像
+- **k8s-yaml**: K8S 配置文件
 - **quadlet**: Quadlet 服务
 - **cloud-init**: 云镜像自动部署配置
 
@@ -25,17 +26,34 @@
 - **Plant UML**
   - 3040: 主站点
 
+- **Seaweed S3**
+  - 8333: S3 接口
+  - 8888: Filer 面板
+  - 9333: 状态面板
+
 ## 3. 服务拉起
 
+### 3.1. Podman Kube（推荐）
+
+**普通服务:**
+
 ```bash
-systemctl --user restart drawio-pod
-systemctl --user restart forgejo-pod
-systemctl --user restart caddy-pod
-systemctl --user restart vaultwarden-pod
-systemctl --user restart excalidraw-pod
+podman kube play k8s.caddy.yaml
 ```
 
-## 4. KVM 配置建议
+**特殊（反向代理）:**
+
+```bash
+podman kube play --network host k8s.caddy.yaml
+```
+
+### 3.2. Quadlet
+
+```bash
+systemctl --user restart forgejo-pod
+```
+
+## 4. Proxmox KVM 配置建议
 
 - **OpenWrt**
 
