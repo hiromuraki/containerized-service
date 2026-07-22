@@ -26,6 +26,9 @@
 - **Plant UML**
   - 3040: 主站点
 
+- **Emotion Library**
+  - 3050: 主站点
+
 - **Seaweed S3**
   - 8333: S3 接口
   - 8888: Filer 面板

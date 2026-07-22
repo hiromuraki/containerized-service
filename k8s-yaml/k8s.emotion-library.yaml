@@ -1,0 +1,59 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: emotion-library-env
+data:
+    S3_ENDPOINT_URL: "https://s3.daveny.top"
+    S3_BUCKET_NAME: "daveny"
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+    name: emotion-library-secret
+type: Opaque
+stringData:
+    AWS_ACCESS_KEY_ID: "admin_access_key"
+    AWS_SECRET_ACCESS_KEY: "admin_secret_key"
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: emotion-library-data
+spec:
+    accessModes:
+        - ReadWriteOnce
+    resources:
+        requests:
+            storage: 1Gi
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+    name: emotion-library
+    labels:
+        app: emotion-library
+spec:
+    restartPolicy: Always
+    containers:
+        - name: emotion-library
+          image: ghcr.io/hiromuraki/emotion-library:latest
+          envFrom:
+              - configMapRef:
+                    name: emotion-library-env
+              - secretRef:
+                    name: emotion-library-secret
+          ports:
+              - containerPort: 8000
+                hostPort: 3050
+                hostIP: 127.0.0.1
+          volumeMounts:
+              - name: data
+                mountPath: /data
+    volumes:
+        - name: data
+          persistentVolumeClaim:
+              claimName: emotion-library-data

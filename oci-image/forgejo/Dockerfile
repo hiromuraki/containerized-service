@@ -1,1 +1,1 @@
-FROM codeberg.org/forgejo/forgejo:15
+FROM codeberg.org/forgejo/forgejo:16.0.1
