@@ -1,1 +1,1 @@
-FROM ghcr.io/seaweedfs/seaweedfs:4.40.0
+FROM docker.io/chrislusf/seaweedfs:4.40
