@@ -1,1 +1,1 @@
-FROM plantuml/plantuml-server:jetty
+FROM docker.io/plantuml/plantuml-server:jetty

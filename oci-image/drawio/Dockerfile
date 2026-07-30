@@ -1,1 +1,1 @@
-FROM jgraph/drawio
+FROM docker.io/jgraph/drawio:31.1.5
