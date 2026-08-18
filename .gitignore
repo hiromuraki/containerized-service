@@ -1,3 +1,8 @@
+# AI
+.agents
+.codex
+.claude
+
 /config/
 *.env
 /_untested/
