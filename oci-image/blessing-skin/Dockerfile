@@ -1,4 +1,4 @@
-FROM alpine:latest AS downloader
+FROM alpine:3 AS downloader
 
 RUN apk add --no-cache wget unzip
 
@@ -35,6 +35,8 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
     a2enmod rewrite headers
 
 COPY ./command.sh /bin/command.sh
+
+EXPOSE 80
 
 ENV APACHE_DOCUMENT_ROOT=/app/public
 

@@ -17,6 +17,6 @@ fi
 echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 # 创建 Sqlite 数据库文件，这里必须手动创建，因为 Blessing Skin 不会自动创建数据库文件
-touch /app/data.db 
+touch /app/data.db
 
 exec apache2-foreground

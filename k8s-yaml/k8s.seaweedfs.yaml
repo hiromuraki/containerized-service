@@ -70,7 +70,7 @@ spec:
         # 1. Master 主控
         - name: master
           image: ghcr.io/hiromuraki/containerized-service/seaweedfs:latest
-          args: ["master"]
+          args: ["master", "-mdir=/data"]
           ports:
               - containerPort: 9333
                 hostPort: 9333
@@ -82,7 +82,7 @@ spec:
         # 2. Volume 存储节点
         - name: volume
           image: ghcr.io/hiromuraki/containerized-service/seaweedfs:latest
-          args: ["volume", "-mserver=localhost:9333", "-port=8080", "-ip=localhost"]
+          args: ["volume", "-mserver=localhost:9333", "-port=8080", "-ip=localhost", "-dir=/data"]
           ports:
               - containerPort: 8080
           volumeMounts:
