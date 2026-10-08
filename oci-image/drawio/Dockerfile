@@ -1,4 +1,4 @@
 # https://hub.docker.com/r/jgraph/drawio/tags
-FROM docker.io/jgraph/drawio:31.1.8
+FROM jgraph/drawio:32.3.0
 
 EXPOSE 8080
