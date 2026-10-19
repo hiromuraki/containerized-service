@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-    name: forgejo-env
+    name: env
 data:
     USER_UID: "1000"
     USER_GID: "1000"
@@ -42,12 +42,17 @@ metadata:
         app: forgejo
 spec:
     restartPolicy: Always
+    terminationGracePeriodSeconds: 30
+
     containers:
         - name: forgejo
           image: ghcr.io/hiromuraki/containerized-service/forgejo:latest
+          imagePullPolicy: Always
+
           envFrom:
               - configMapRef:
                     name: forgejo-env
+
           ports:
               - containerPort: 3000
                 hostPort: 3000
@@ -55,10 +60,17 @@ spec:
               # 2222 SSH 端口不方便反代，且 SSH 本身足够安全，所以直接监听所有网口即可
               - containerPort: 22
                 hostPort: 2222
+
+          resources:
+              requests:
+                  memory: 128Mi
+              limits:
+                  memory: 512Mi
+
           volumeMounts:
-              - name: forgejo-data
+              - name: data
                 mountPath: /data
     volumes:
-        - name: forgejo-data
+        - name: data
           persistentVolumeClaim:
               claimName: forgejo-data
