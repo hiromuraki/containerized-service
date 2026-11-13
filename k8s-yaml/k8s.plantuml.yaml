@@ -17,11 +17,9 @@ spec:
     restartPolicy: Always
     containers:
         - name: plantuml
-          image: ghcr.io/hiromuraki/containerized-service/plantuml:latest
+          image: docker.io/plantuml/plantuml-server:jetty
           envFrom:
               - configMapRef:
                     name: plantuml-env
           ports:
               - containerPort: 8080
-                hostPort: 3040
-                hostIP: 127.0.0.1

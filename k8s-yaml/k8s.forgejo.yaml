@@ -46,17 +46,19 @@ spec:
 
     containers:
         - name: forgejo
-          image: ghcr.io/hiromuraki/containerized-service/forgejo:latest
+          # https://forgejo.org/releases/
+          image: codeberg.org/forgejo/forgejo:17.0.1
           imagePullPolicy: Always
+
+          securityContext:
+              allowPrivilegeEscalation: false
 
           envFrom:
               - configMapRef:
-                    name: forgejo-env
+                    name: env
 
           ports:
               - containerPort: 3000
-                hostPort: 3000
-                hostIP: 127.0.0.1
               # 2222 SSH 端口不方便反代，且 SSH 本身足够安全，所以直接监听所有网口即可
               - containerPort: 22
                 hostPort: 2222

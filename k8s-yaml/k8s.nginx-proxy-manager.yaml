@@ -39,22 +39,36 @@ metadata:
         app: nginx-proxy-manager
 spec:
     restartPolicy: Always
+    terminationGracePeriodSeconds: 30
+
     containers:
         - name: nginx-proxy-manager
-          image: ghcr.io/hiromuraki/containerized-service/nginx-proxy-manager:latest
+          # https://hub.docker.com/r/jc21/nginx-proxy-manager/tags
+          image: jc21/nginx-proxy-manager:2.17.0
+          imagePullPolicy: Always
+
+          securityContext:
+              allowPrivilegeEscalation: false
+
           envFrom:
               - configMapRef:
                     name: nginx-proxy-manager-env
+
           ports:
               - containerPort: 80
                 hostPort: 80
-                hostIP: 127.0.0.1
               - containerPort: 443
                 hostPort: 443
-                hostIP: 127.0.0.1
               - containerPort: 81
                 hostPort: 81
                 hostIP: 127.0.0.1
+
+          resources:
+              requests:
+                  memory: 64Mi
+              limits:
+                  memory: 512Mi
+
           volumeMounts:
               - name: data
                 mountPath: /data

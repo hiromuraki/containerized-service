@@ -3,7 +3,11 @@ Description=Vaultwarden Password Manager
 After=network-online.target
 
 [Container]
-Image=ghcr.io/hiromuraki/containerized-service/vaultwarden:latest
+Image=docker.io/vaultwarden/server:1.37.5-alpine
+NoNewPrivileges=true
+ReadOnly=true
+DropCapability=ALL
+AddCapability=NET_BIND_SERVICE
 ContainerName=vaultwarden
 Pod=vaultwarden.pod
 

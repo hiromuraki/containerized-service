@@ -15,13 +15,25 @@ metadata:
         app: drawio
 spec:
     restartPolicy: Always
+    terminationGracePeriodSeconds: 30
+
     containers:
         - name: drawio
-          image: ghcr.io/hiromuraki/containerized-service/drawio:latest
+          # https://hub.docker.com/r/jgraph/drawio
+          image: jgraph/drawio:32.6.10
+          imagePullPolicy: Always
+
+          securityContext:
+              allowPrivilegeEscalation: false
+
           envFrom:
               - configMapRef:
                     name: drawio-env
           ports:
               - containerPort: 8080
-                hostPort: 3020
-                hostIP: 127.0.0.1
+
+          resources:
+              requests:
+                  memory: 64Mi
+              limits:
+                  memory: 512Mi

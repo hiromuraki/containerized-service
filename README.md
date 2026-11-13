@@ -2,29 +2,43 @@
 
 ## 1. 目录结构
 
-- **oci-image**: 容器镜像
-- **k8s-yaml**: K8S 配置文件
+- **oci-image**: 需要自行构建的镜像（caddy、excalidraw、seaweedfs 等）
+- **k8s-yaml**: K8S / Podman Kube 配置文件
 - **quadlet**: Quadlet 服务
 - **cloud-init**: 云镜像自动部署配置
 
+Forgejo、Vaultwarden、Drawio、PlantUML、Dufs、Nginx Proxy Manager 直接使用上游镜像，不再经过 `oci-image` 代理构建。
+
 ## 2. 默认端口占用
 
+Forgejo、Vaultwarden、Drawio、PlantUML、Dufs 默认只监听容器网络，由反向代理（Caddy 或 Nginx Proxy Manager，二选一，占用 80/443/81）转发；其余服务按下列端口映射到宿主机。Quadlet 额外映射的端口单独标注。
+
+- **反向代理**
+  - 80/443: HTTP/HTTPS
+  - 81: 管理后台（Nginx Proxy Manager；建议只监听 127.0.0.1）
+
 - **Forgejo**
-  - 3000: 主站点
-  - 2222: Git SSH
+  - 2222: Git SSH（直接映射到宿主机）
+  - 3000: 主站点（仅容器网络；Quadlet 映射 127.0.0.1:3000）
 
 - **Vaultwarden**
-  - 3010: 主站点
+  - 80: 主站点（仅容器网络；Quadlet 映射 127.0.0.1:3010）
 
 - **Drawio**
-  - 3020: 主站点
+  - 8080: 主站点（仅容器网络；Quadlet 映射 127.0.0.1:3020）
+
+- **PlantUML**
+  - 8080: 主站点（仅容器网络；Quadlet 映射 127.0.0.1:3040）
+
+- **Dufs**
+  - 5000: 文件服务（仅容器网络，由反向代理转发）
 
 - **Excalidraw**
   - 3030: 主站点
   - 3031: 协同服务器
 
-- **Plant UML**
-  - 3040: 主站点
+- **Blessing Skin**
+  - 25580: 主站点（127.0.0.1）
 
 - **Emotion Library**
   - 3050: 主站点
@@ -41,18 +55,30 @@
 **普通服务:**
 
 ```bash
-podman kube play k8s.caddy.yaml
+podman kube play k8s.forgejo.yaml
 ```
 
-**特殊（反向代理）:**
+**反向代理（Nginx Proxy Manager，占用 80/443/81）:**
+
+```bash
+podman kube play k8s.nginx-proxy-manager.yaml
+```
+
+**反向代理（Caddy，host 网络）:**
 
 ```bash
 podman kube play --network host k8s.caddy.yaml
 ```
 
+> NPM 与 Caddy 都会占用 80/443/81，同一台机器只能启用其中一个。
+> 需要反代的服务不再发布宿主机端口，请在 NPM 中把 Forward Hostname 指向对应容器名或 Pod IP。
+
 ### 3.2. Quadlet
 
+修改 `quadlet/` 下的文件后，需要重新生成并重启：
+
 ```bash
+systemctl --user daemon-reload
 systemctl --user restart forgejo-pod
 ```
 

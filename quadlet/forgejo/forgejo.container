@@ -3,7 +3,8 @@ Description=Forgejo Git Service
 After=network-online.target
 
 [Container]
-Image=ghcr.io/hiromuraki/containerized-service/forgejo:latest
+Image=codeberg.org/forgejo/forgejo:17.0.1
+NoNewPrivileges=true
 ContainerName=forgejo
 Pod=forgejo.pod
 

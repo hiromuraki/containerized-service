@@ -3,7 +3,8 @@ Description=Draw.io
 After=network-online.target
 
 [Container]
-Image=ghcr.io/hiromuraki/containerized-service/drawio:latest
+Image=docker.io/jgraph/drawio:32.6.10
+NoNewPrivileges=true
 ContainerName=drawio
 Pod=drawio.pod
 

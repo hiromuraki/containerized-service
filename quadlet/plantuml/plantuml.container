@@ -1,15 +1,14 @@
 [Unit]
-Description=Draw.io
+Description=PlantUML
 After=network-online.target
 
 [Container]
-Image=ghcr.io/hiromuraki/containerized-service/plantuml:latest
+Image=docker.io/plantuml/plantuml-server:jetty
+NoNewPrivileges=true
 ContainerName=plantuml
 Pod=plantuml.pod
 
 EnvironmentFile=%h/.env.plantuml
-
-PublishPort=127.0.0.1:3040:8080
 
 [Service]
 Restart=always
